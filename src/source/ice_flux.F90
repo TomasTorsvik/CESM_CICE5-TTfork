@@ -207,6 +207,15 @@
          fhocn   , & ! net heat flux to ocean (W/m^2)
          fswthru     ! shortwave penetrating to ocean (W/m^2)
 
+      logical (kind=log_kind), public :: &
+         send_i2x_per_cat = .false. ! if true, pass select per ice thickness category fields to the coupler
+            ! do not move this initialization to a init subroutine, because non-default
+            ! values are set in ice_cpl_indices_set in drivers/cesm/ice_cpl_indices.F90
+            ! which is called before other init subroutines
+
+      real (kind=dbl_kind), dimension (:,:,:,:), allocatable, public :: &
+         fswthrun_ai ! per-category fswthru * ai (W/m^2)
+
       real (kind=dbl_kind), &
         dimension (nx_block,ny_block,max_aero,max_blocks), public :: &
          faero_ocn   ! aerosol flux to ocean  (kg/m^2/s)
@@ -267,6 +276,7 @@
          fcondtop,&! top surface conductive flux        (W/m^2)
          congel, & ! basal ice growth         (m/step-->cm/day)
          frazil, & ! frazil ice growth        (m/step-->cm/day)
+         frazil_diag, & ! frazil ice growth diagnostic (m/step-->cm/day)
          snoice, & ! snow-ice formation       (m/step-->cm/day)
          meltt , & ! top ice melt             (m/step-->cm/day)
          melts , & ! snow melt                (m/step-->cm/day)
@@ -480,6 +490,11 @@
       fsalt_da(:,:,:) = c0
       flux_bio (:,:,:,:) = c0 ! bgc
 
+      if (send_i2x_per_cat) then
+         allocate(fswthrun_ai(nx_block,ny_block,ncat,max_blocks))
+         fswthrun_ai(:,:,:,:) = c0
+      endif
+
       !-----------------------------------------------------------------
       ! derived or computed fields
       !-----------------------------------------------------------------
@@ -549,6 +564,10 @@
  
       flux_bio (:,:,:,:) = c0  ! bgc
 
+      if (send_i2x_per_cat) then
+         fswthrun_ai(:,:,:,:) = c0
+      endif
+
       end subroutine init_flux_ocn
 
 !=======================================================================
@@ -572,6 +591,7 @@
       fcondtop(:,:,:)= c0
       congel (:,:,:) = c0
       frazil (:,:,:) = c0
+      frazil_diag (:,:,:) = c0
       snoice (:,:,:) = c0
       dsnow  (:,:,:) = c0
       meltt  (:,:,:) = c0
