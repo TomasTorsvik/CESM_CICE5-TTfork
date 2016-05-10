@@ -1090,16 +1090,6 @@ Default: false
 </entry>
 
 <entry
-id="tfrz_option"
-type="char*80"
-category="forcing"
-group="forcing_nml" >
-valid_values="minus1p8,linear_salt,mushy">
-freezing temperature formulation
-Default: 'minus1p8'
-</entry>
-
-<entry
 id="fbot_xfer_type"
 type="char*80"
 category="forcing"
@@ -2383,6 +2373,55 @@ group="icefields_nml" >
 
 <entry
 id="f_yieldstress22"
+type="char*5"
+category="history"
+group="icefields_nml" >
+</entry>
+
+<entry
+id="f_sithick"
+type="char*5"
+category="history"
+group="icefields_nml" >
+</entry>
+
+<entry
+id="f_sisnthick"
+type="char*5"
+category="history"
+group="icefields_nml" >
+</entry>
+
+<entry
+id="f_sitemptop"
+type="char*5"
+category="history"
+group="icefields_nml" >
+</entry>
+
+<entry
+id="f_sitempsnic"
+type="char*5"
+category="history"
+group="icefields_nml" >
+</entry>
+
+<entry
+id="f_sitempbot"
+type="char*5"
+category="history"
+group="icefields_nml" >
+</entry>
+
+<entry
+id="f_sispeed"
+type="char*5"
+category="history"
+group="icefields_nml" >
+</entry>
+
+<entry
+id="f_sialb"
 type="char*5"
 category="history"
 group="icefields_nml" >
