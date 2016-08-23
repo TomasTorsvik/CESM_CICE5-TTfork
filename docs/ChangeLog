@@ -1,4 +1,54 @@
 ===============================================================
+cice5_20160614
+Originator: dbailey
+Date: 14 Jun 2016
+Version: 5.0
+One-line Summary: Fix RUN_REFCASE logic.
+
+M       bld/build-namelist
+
+===============================================================
+cice5_20160613
+Originator: dbailey
+Date: 13 Jun 2016
+Version: 5.0
+One-line Summary: Make cice5 physics the default in prescribed
+ mode.
+
+M       bld/configure
+
+===============================================================
+cice5_20160520
+Originator: dbailey
+Date: 19 May 2016
+Version: 5.0
+One-line Summary: Update aux_cice test list.
+
+M       cime_config/testdefs/testlist_cice.xml
+
+===============================================================
+cice5_20160519
+Originator: dbailey
+Date: 18 May 2016
+Version: 5.0
+One-line Summary: Modifications for standalone CAM.
+
+M       bld/configure
+
+===============================================================
+cice5_20160518
+Originator: dbailey
+Date: 18 May 2016
+Version: 5.0
+One-line Summary: Modifications for standalone CAM.
+
+M       bld/configure
+M       src/source/ice_history.F90
+M       src/io_pio/ice_restart.F90
+M       src/io_pio/ice_pio.F90
+M       src/io_pio/ice_history_write.F90
+
+===============================================================
 cice5_20160401
 Originator: dbailey
 Date: 01 Apr 2016

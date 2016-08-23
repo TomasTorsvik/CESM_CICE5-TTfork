@@ -232,9 +232,33 @@
            f_iage      = 'm', f_FY         = 'm', &
            f_hisnap    = 'm', f_aisnap     = 'm', &
            f_sithick   = 'x', f_sisnthick  = 'x', &
+           f_sisnconc  = 'x', f_siage      = 'x', &
            f_sitemptop = 'x', f_sitempsnic = 'x', &
            f_sitempbot = 'x', f_sispeed    = 'x', &
+           f_siu       = 'x', f_siv        = 'x', &
+           f_sidmasstranx = 'x', f_sidmasstrany = 'x', &
+           f_sistrxdtop = 'x', f_sistrydtop = 'x', &
+           f_sistrxubot = 'x', f_sistryubot = 'x', &
+           f_sicompstren = 'x', &
            f_sialb     = 'x', &
+           f_sihc      = 'x', f_sisnhc     = 'x', &
+           f_sidconcth = 'x', f_sidconcdyn = 'x', &
+           f_sidmassth = 'x', f_sidmassdyn = 'x', &
+           f_sidmassevapsubl = 'x', &
+           f_sndmasssnf = 'x', &
+           f_siflswdtop = 'x', &
+           f_siflswutop = 'x', &
+           f_siflswdbot = 'x', &
+           f_sifllwdtop = 'x', &
+           f_sifllwutop = 'x', &
+           f_siflsenstop = 'x', &
+           f_siflsensupbot = 'x', &
+           f_sifllatstop = 'x', &
+           f_siflcondtop = 'x', &
+           f_siflcondbot = 'x', &
+           f_sipr = 'x', &
+           f_siflsaltbot = 'x', &
+           f_siflfwbot = 'x', &
            f_aicen     = 'x', f_vicen      = 'x', &
            f_vsnon     = 'x',                     &
            f_trsig     = 'm', f_icepresent = 'm', &
@@ -321,9 +345,33 @@
            f_iage,      f_FY       , &
            f_hisnap,    f_aisnap   , &
            f_sithick,   f_sisnthick, &
+           f_sisnconc,  f_siage,     &
            f_sitemptop, f_sitempsnic,&
            f_sitempbot, f_sispeed,   &
+           f_siu,       f_siv,       &
+           f_sidmasstranx, f_sidmasstrany, &
+           f_sistrxdtop, f_sistrydtop, &
+           f_sistrxubot, f_sistryubot, &
+           f_sicompstren, &
            f_sialb, &
+           f_sihc,      f_sisnhc,    &
+           f_sidconcth, f_sidconcdyn,&
+           f_sidmassth, f_sidmassdyn,&
+           f_sidmassevapsubl, &
+           f_sndmasssnf, &
+           f_siflswdtop, &
+           f_siflswutop, &
+           f_siflswdbot, &
+           f_sifllwdtop, &
+           f_sifllwutop, &
+           f_siflsenstop, &
+           f_siflsensupbot, &
+           f_sifllatstop, &
+           f_siflcondtop, &
+           f_siflcondbot, &
+           f_sipr, &
+           f_siflsaltbot, &
+           f_siflfwbot, &
            f_aicen,     f_vicen    , &
            f_vsnon,                  &
            f_trsig,     f_icepresent,&
@@ -410,9 +458,33 @@
            n_fresh      , n_fresh_ai   , &
            n_fsalt      , n_fsalt_ai   , &
            n_sithick    , n_sisnthick  , &
+           n_sisnconc,    n_siage,       &
            n_sitemptop  , n_sitempsnic , &
            n_sitempbot  , n_sispeed,     &
+           n_siu,         n_siv,         &
+           n_sidmasstranx, n_sidmasstrany, &
+           n_sistrxdtop,  n_sistrydtop,  &
+           n_sistrxubot,  n_sistryubot,  &
+           n_sicompstren, &
            n_sialb, &
+           n_sihc       , n_sisnhc,      &
+           n_sidconcth  , n_sidconcdyn,  &
+           n_sidmassth  , n_sidmassdyn,  &
+           n_sidmassevapsubl,  &
+           n_sndmasssnf,  &
+           n_siflswdtop,  &
+           n_siflswutop,  &
+           n_siflswdbot,  &
+           n_sifllwdtop,  &
+           n_sifllwutop,  &
+           n_siflsenstop,  &
+           n_siflsensupbot,  &
+           n_sifllatstop,  &
+           n_siflcondtop,  &
+           n_siflcondbot,  &
+           n_sipr,  &
+           n_siflsaltbot,  &
+           n_siflfwbot,  &
            n_vsnon,                        &
            n_fhocn      , n_fhocn_ai   , &
            n_fswthru    , n_fswthru_ai , &
