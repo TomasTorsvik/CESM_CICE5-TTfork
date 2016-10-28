@@ -998,6 +998,7 @@ type="logical"
 category="forcing"
 group="forcing_nml" >
 include frazil water/salt fluxes in ocean fluxes
+Default: false
 </entry>
 
 <entry

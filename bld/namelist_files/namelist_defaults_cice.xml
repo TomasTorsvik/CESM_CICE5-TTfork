@@ -38,10 +38,14 @@
 <grid_type hgrid="tx1v1"    >'tripole'      </grid_type> 
 <grid_type hgrid="ar9v3"    >'regional'     </grid_type> 
 <grid_type hgrid="ar9v4"    >'regional'     </grid_type> 
+<grid_type hgrid="tnx0.25v1"  >'tripole'      </grid_type> 
+<grid_type hgrid="tnx1v1"    >'tripole'      </grid_type>
 <grid_type                  >'displaced_pole'</grid_type> 
 
 <grid_format hgrid="tx0.1v2">'bin'</grid_format> 
-<grid_format hgrid="tx1v1"  >'bin'</grid_format> 
+<grid_format hgrid="tx1v1"  >'bin'</grid_format>
+<grid_format hgrid="tnx1v1" >'bin'</grid_format>
+<grid_format hgrid="tnx0.25v1" >'bin'</grid_format> 
 <grid_format                >'bin'</grid_format> 
 
 <grid_file hgrid="gx1v6"    >'ocn/pop/gx1v6/grid/horiz_grid_20010402.ieeer8'</grid_file> 
@@ -53,6 +57,8 @@
 <grid_file hgrid="ar9v3"    >'ice/cice/ar9v3_20101118.grid'       </grid_file>
 <grid_file hgrid="ar9v4"    >'ice/cice/ar9v3_20101118.grid'       </grid_file>
 <grid_file hgrid="us20"     >'ice/cice/domain.ocn.us20.20110426.nc'</grid_file> 
+<grid_file hgrid="tnx1v1"   >'ocn/pop/tnx1v1/grid/horiz_grid_20120120.ieeer8'</grid_file>
+<grid_file hgrid="tnx0.25v1" >'ocn/pop/tnx0.25v1/grid/horiz_grid_20130930.ieeer8'</grid_file>
 
 <kmt_file hgrid="gx1v6"     >'ocn/pop/gx1v6/grid/topography_20090204.ieeei4'</kmt_file> 
 <kmt_file hgrid="gx1v5"     >'ocn/pop/gx1v5/grid/topography_20061229.ieeei4'</kmt_file> 
@@ -63,7 +69,8 @@
 <kmt_file hgrid="ar9v3"     >'ocn/pop/ar9v3/grid/kmt.ar9v3.ocn.ChanBarrier.20100622.ieeei4'</kmt_file>
 <kmt_file hgrid="ar9v4"     >'ice/cice/ar9v3_20110106.kmt'       </kmt_file>
 <kmt_file hgrid="us20"      >'ice/cice/domain.ocn.us20.20110426.nc'</kmt_file> 
-
+<kmt_file hgrid="tnx1v1"    >'ocn/pop/tnx1v1/grid/topography_20120120.ieeei4'</kmt_file>
+<kmt_file hgrid="tnx0.25v1" >'ocn/pop/tnx0.25v1/grid/topography_20130930.ieeei4'</kmt_file>
 <gridcpl_file               >'unknown_gridcpl_file'                </gridcpl_file>
 <gridcpl_file hgrid="ar9v4" >'ice/cice/domain.ocn.ar9v4.100920.nc' </gridcpl_file>
 
@@ -323,7 +330,10 @@
 
 <ns_boundary_type hgrid ='tx0.1v2' >'tripole'</ns_boundary_type>
 <ns_boundary_type hgrid ='tx1v1'   >'tripole'</ns_boundary_type>
+<ns_boundary_type hgrid ='tnx1v1'  >'tripole'</ns_boundary_type>
+<ns_boundary_type hgrid ='tnx0.25v1'>'tripole'</ns_boundary_type>
 <ns_boundary_type                  >'open'   </ns_boundary_type>
+
 
 <formdrag                >.false.</formdrag>
 <formdrag hgrid="ar9v3"  >.false.</formdrag>
@@ -336,6 +346,7 @@
 <natmiter                >  5 </natmiter>
 <natmiter hgrid="ar9v3"  > 25 </natmiter>
 <natmiter hgrid="ar9v4"  > 25 </natmiter>
+<update_ocn_f            >.false.</update_ocn_f>
 
 <fbot_xfer_type          >'constant'</fbot_xfer_type>
 <l_mpond_fresh           >.false.</l_mpond_fresh>
