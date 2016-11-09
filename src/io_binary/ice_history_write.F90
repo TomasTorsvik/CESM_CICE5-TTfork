@@ -118,7 +118,7 @@
 
         write (nu_hdr, *  ) 'Grid variables: (left column = nrec)'
         nrec = 1
-        write (nu_hdr, 996) nrec,'tarea','area of T grid cells','m^2'
+        write (nu_hdr, 996) nrec,'tarea','area of T grid cells','m2'
         write (nu_hdr, *  ) 'History variables: (left column = nrec)'
       endif  ! my_task = master_task
       call ice_write(nu_history, nrec, tarea, 'rda4', diag)
@@ -145,6 +145,7 @@
             if (histfreq(ns) == '1' .or. .not. hist_avg         &
                 .or. n==n_divu(ns)      .or. n==n_shear(ns)     &  ! snapshots
                 .or. n==n_sig1(ns)      .or. n==n_sig2(ns)      &
+                .or. n==n_sistreave(ns) .or. n==n_sistremax(ns) &
                 .or. n==n_trsig(ns)                             &
                 .or. n==n_mlt_onset(ns) .or. n==n_frz_onset(ns) &
                 .or. n==n_hisnap(ns)    .or. n==n_aisnap(ns)) then
