@@ -50,7 +50,10 @@
     <type>char</type>
     <default_value></default_value>
     <values>
+      <value compset="_MICOM">update_ocn_f=.true.</value>
       <value compset="_CAM4">cam4=.true.</value>
+      <value compset="_CAM4.*MICOM">cam4=.true.,update_ocn_f=.true.</value>
+     
     </values>
     <group>run_component_cice</group>
     <file>env_run.xml</file>
