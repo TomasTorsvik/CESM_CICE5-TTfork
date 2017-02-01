@@ -262,11 +262,11 @@
       var(n_blkmask)%coordinates = 'TLON TLAT'
 
       var(n_tarea)%req = coord_attributes('tarea', &
-                  'area of T grid cells', 'm^2')
+                  'area of T grid cells', 'm2')
       var(n_tarea)%coordinates = 'TLON TLAT'
 
       var(n_uarea)%req = coord_attributes('uarea', &
-                  'area of U grid cells', 'm^2')
+                  'area of U grid cells', 'm2')
       var(n_uarea)%coordinates = 'ULON ULAT'
       var(n_dxt)%req = coord_attributes('dxt', &
                   'T cell width through middle', 'm')
@@ -421,7 +421,9 @@
             ! Add cell_methods attribute to variables if averaged
             if (hist_avg .and. histfreq(ns) /= '1') then
               if (TRIM(avail_hist_fields(n)%vname)/='sig1' &
-              .or.TRIM(avail_hist_fields(n)%vname)/='sig2') then
+              .or.TRIM(avail_hist_fields(n)%vname)/='sig2' &
+              .or.TRIM(avail_hist_fields(n)%vname)/='sistreave' &
+              .or.TRIM(avail_hist_fields(n)%vname)/='sistremax') then
                 status = pio_put_att(File,varid,'cell_methods','time: mean')
               endif
             endif
@@ -429,6 +431,7 @@
             if (histfreq(ns) == '1' .or. .not. hist_avg         &
                 .or. n==n_divu(ns)      .or. n==n_shear(ns)     &  ! snapshots
                 .or. n==n_sig1(ns)      .or. n==n_sig2(ns)      &
+                .or. n==n_sistreave(ns) .or. n==n_sistremax(ns) &
                 .or. n==n_trsig(ns)                             &
                 .or. n==n_mlt_onset(ns) .or. n==n_frz_onset(ns) &
                 .or. n==n_hisnap(ns)    .or. n==n_aisnap(ns)) then
