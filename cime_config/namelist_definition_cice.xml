@@ -380,6 +380,8 @@
       <value hgrid="tx1v1">tripole</value> 
       <value hgrid="ar9v3">regional</value> 
       <value hgrid="ar9v4">regional</value> 
+      <value hgrid="tnx1v1">tripole</value> 
+      <value hgrid="tnx0.25v1">tripole</value> 
     </values>
   </entry>
 
@@ -400,6 +402,8 @@
       <value hgrid="ar9v3">$DIN_LOC_ROOT/ice/cice/ar9v3_20101118.grid</value>
       <value hgrid="ar9v4">$DIN_LOC_ROOT/ice/cice/ar9v3_20101118.grid</value>
       <value hgrid="us20">$DIN_LOC_ROOT/ice/cice/domain.ocn.us20.20110426.nc</value> 
+      <value hgrid="tnx1v1">$DIN_LOC_ROOT/ocn/pop/tnx1v1/grid/horiz_grid_20120120.ieeer8</value> 
+      <value hgrid="tnx0.25v1">$DIN_LOC_ROOT/ocn/pop/tnx0.25v1/grid/horiz_grid_20130930.ieeer8</value> 
     </values>
   </entry>
 
@@ -420,6 +424,8 @@
       <value hgrid="ar9v3">$DIN_LOC_ROOT/ocn/pop/ar9v3/grid/kmt.ar9v3.ocn.ChanBarrier.20100622.ieeei4</value>
       <value hgrid="ar9v4">$DIN_LOC_ROOT/ice/cice/ar9v3_20110106.kmt</value>
       <value hgrid="us20">$DIN_LOC_ROOT/ice/cice/domain.ocn.us20.20110426.nc</value> 
+      <value hgrid="tnx1v1">$DIN_LOC_ROOT/ocn/pop/tnx1v1/grid/topography_20120120.ieeei4</value> 
+      <value hgrid="tnx0.25v1">$DIN_LOC_ROOT/ocn/pop/tnx0.25v1/grid/topography_20130930.ieeei4</value> 
     </values>
   </entry>
 
@@ -516,6 +522,8 @@
       <value>open</value>
       <value hgrid ='tx0.1v2'>tripole</value>
       <value hgrid ='tx1v1'>tripole</value>
+      <value hgrid ='tnx1v1'>tripole</value>
+      <value hgrid ='tnx0.25v1'>tripole</value>
     </values>
   </entry>
 
