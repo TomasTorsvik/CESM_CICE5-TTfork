@@ -46,18 +46,15 @@
     </desc>
   </entry>
 
-  <entry id="CICE_NAMELIST_OPTS">
+  <entry id="update_ocn_f">
     <type>char</type>
-    <default_value></default_value>
+    <default_value>.false.</default_value>
     <values>
-      <value compset="_MICOM">update_ocn_f=.true.</value>
-      <value compset="_CAM4">cam4=.true.</value>
-      <value compset="_CAM4.*MICOM">cam4=.true.,update_ocn_f=.true.</value>
-     
+      <value compset="_MICOM">.true.</value>
     </values>
     <group>run_component_cice</group>
     <file>env_run.xml</file>
-    <desc>CICE specific namelist settings for -namelist option</desc>
+    <desc>update_ocn_f .true. for MICOM else .false.</desc>
   </entry>
 
   <entry id="CICE_AUTO_DECOMP">
