@@ -1414,7 +1414,7 @@
      </desc> 
      <values>
        <value>.false.</value>
-       <value compset="_MICOM">.true.</value>
+       <value ocn_model="micom">.true.</value>
      </values> 
   </entry> 
 
