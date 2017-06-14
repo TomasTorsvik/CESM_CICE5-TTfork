@@ -47,8 +47,10 @@ def _create_namelists(case, confdir, infile, nmlgen):
 
     cice_mode = case.get_value("CICE_MODE")
     hgrid = case.get_value('ICE_GRID')
+    ocn_model = case.get_value('COMP_OCN')
     config['hgrid'] = hgrid
     config['cice_mode'] = cice_mode
+    config['ocn_model'] = ocn_model
 
     cice_config_opts = case.get_value('CICE_CONFIG_OPTS')
     if "cice5" in cice_config_opts:

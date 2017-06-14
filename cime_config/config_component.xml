@@ -46,17 +46,6 @@
     </desc>
   </entry>
 
-  <entry id="update_ocn_f">
-    <type>char</type>
-    <default_value>.false.</default_value>
-    <values>
-      <value compset="_MICOM">.true.</value>
-    </values>
-    <group>run_component_cice</group>
-    <file>env_run.xml</file>
-    <desc>update_ocn_f .true. for MICOM else .false.</desc>
-  </entry>
-
   <entry id="CICE_AUTO_DECOMP">
     <type>logical</type>
     <valid_values>true,false</valid_values>
