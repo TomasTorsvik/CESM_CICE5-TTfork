@@ -732,7 +732,7 @@
 #ifdef ncdf
 !     use ice_boundary
       use ice_domain_size
-#ifdef CCSMCOUPLED
+#ifdef CESMCOUPLED
       use ice_scam, only : scmlat, scmlon, single_column
 #endif
       use ice_constants, only: c0, c1, pi, pi2, rad_to_deg, puny, p5, p25, &
@@ -785,7 +785,7 @@
       ! - Read in lon/lat centers in degrees from kmt file
       ! - Read in ocean from "kmt" file (1 for ocean, 0 for land)
       !-----------------------------------------------------------------
-#ifdef CCSMCOUPLED
+#ifdef CESMCOUPLED
 
       ! Determine dimension of domain file and check for consistency
 
@@ -919,6 +919,19 @@
       end do
       !$OMP END PARALLEL DO
 
+      call ice_HaloUpdate (TLON,             halo_info, &
+                           field_loc_center, field_type_scalar, &
+                           fillValue=c1)
+      call ice_HaloUpdate (TLAT,             halo_info, &
+                           field_loc_center, field_type_scalar, &
+                           fillValue=c1)
+      call ice_HaloUpdate (tarea,             halo_info, &
+                           field_loc_center, field_type_scalar, &
+                           fillValue=c1)
+      call ice_HaloUpdate (hm,             halo_info, &
+                           field_loc_center, field_type_scalar, &
+                           fillValue=c1)
+
       !-----------------------------------------------------------------
       ! Calculate various geometric 2d arrays
       ! The U grid (velocity) is not used when run with sequential CAM
@@ -931,6 +944,8 @@
       ! hacked by adding half the latitudinal spacing (in radians) to
       ! TLAT.
       !-----------------------------------------------------------------
+
+      ANGLET(:,:,:) = c0                             
 
      !$OMP PARALLEL DO PRIVATE(iblk,this_block,ilo,ihi,jlo,jhi,i,j)
       do iblk = 1, nblocks
@@ -966,7 +981,6 @@
             ULON  (i,j,iblk) = c0
             ANGLE (i,j,iblk) = c0                             
 
-            ANGLET(i,j,iblk) = c0                             
             HTN   (i,j,iblk) = 1.e36_dbl_kind
             HTE   (i,j,iblk) = 1.e36_dbl_kind
             dxt   (i,j,iblk) = 1.e36_dbl_kind
@@ -984,6 +998,9 @@
       enddo
       !$OMP END PARALLEL DO
 
+      call ice_HaloUpdate (ULAT,             halo_info, &
+                           field_loc_center, field_type_scalar, &
+                           fillValue=c1)
       call makemask
 #endif
 #endif

@@ -22,7 +22,7 @@
       module ice_fileunits
 
       use ice_kinds_mod
-#ifdef CCSMCOUPLED
+#ifdef CESMCOUPLED
       use shr_file_mod, only : shr_file_getunit, shr_file_freeunit
 #endif
 
@@ -54,6 +54,8 @@
          nu_restart_pond,&  ! restart input file for melt pond tracer
          nu_dump_aero  , &  ! dump file for restarting aerosol tracer
          nu_restart_aero,&  ! restart input file for aerosol tracer
+         nu_dump_iso   , &  ! dump file for restarting isotope tracer
+         nu_restart_iso ,&  ! restart input file for isotope tracer
          nu_dump_bgc   , &  ! dump file for restarting bgc
          nu_restart_bgc, &  ! restart input file for bgc
          nu_dump_hbrine, &  ! dump file for restarting hbrine
@@ -119,6 +121,8 @@
          call get_fileunit(nu_restart_pond)
          call get_fileunit(nu_dump_aero)
          call get_fileunit(nu_restart_aero)
+         call get_fileunit(nu_dump_iso)
+         call get_fileunit(nu_restart_iso)
          call get_fileunit(nu_dump_bgc)
          call get_fileunit(nu_restart_bgc)
          call get_fileunit(nu_dump_hbrine)
@@ -146,12 +150,12 @@
 
    ! local variables
 
-#ifndef CCSMCOUPLED
+#ifndef CESMCOUPLED
    integer (kind=int_kind) :: n  ! dummy loop index
    logical (kind=log_kind) :: alreadyInUse
 #endif
 
-#ifdef CCSMCOUPLED
+#ifdef CESMCOUPLED
    iunit = shr_file_getUnit()
 #else
 
@@ -200,6 +204,8 @@
          call release_fileunit(nu_restart_pond)
          call release_fileunit(nu_dump_aero)
          call release_fileunit(nu_restart_aero)
+         call release_fileunit(nu_dump_iso)
+         call release_fileunit(nu_restart_iso)
          call release_fileunit(nu_dump_bgc)
          call release_fileunit(nu_restart_bgc)
          call release_fileunit(nu_dump_hbrine)
@@ -225,7 +231,7 @@
    integer (kind=int_kind), intent(in) :: &
       iunit                    ! I/O unit to be released
 
-#ifdef CCSMCOUPLED
+#ifdef CESMCOUPLED
          call shr_file_freeUnit(iunit)
 #else
 !  check for proper unit number
@@ -252,7 +258,7 @@
 
       subroutine flush_fileunit(iunit)
 
-#ifdef CCSMCOUPLED
+#ifdef CESMCOUPLED
       use shr_sys_mod, only : shr_sys_flush
 #endif
 
@@ -265,7 +271,7 @@
 !
 !-----------------------------------------------------------------------
 
-#ifdef CCSMCOUPLED
+#ifdef CESMCOUPLED
    call shr_sys_flush(iunit)
 #else
 #if (defined IRIX64 || defined CRAY || defined OSF1 || defined SUNOS || defined LINUX || defined NEC_SX | defined UNICOSMP)

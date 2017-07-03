@@ -1,22 +1,324 @@
 ===============================================================
+cice5_20170607
+Originator: dbailey
+Date: 07 Jun 2017
+Version: 5.0
+One-line: Better fix for DECOMPSETTING.
+
+M       bld/generate_cice_decomp.pl
+M       cime_config/buildcpp
+M       cime_config/buildnml
+
+===============================================================
+cice5_20170606
+Originator: dbailey
+Date: 06 Jun 2017
+Version: 5.0
+One-line: Fix DECOMPSETTING.
+
+Fix CICE_DECOMPSETTING and processor_shape. Also, force
+prescribed ice mode to use the roundrobin distribution.
+
+M       cime_config/buildcpp
+M       cime_config/buildnml
+M       cime_config/namelist_definition_cice.xml
+
+===============================================================
+cice5_20170602
+Originator: dbailey
+Date: 01 Jun 2017
+Version: 5.0
+One-line: CMIP variable changes
+
+M       cime_config/namelist_definition_cice.xml
+M       src/source/ice_history.F90
+
+===============================================================
+cice5_20170601
+Originator: dbailey
+Date: 01 Jun 2017
+Version: 5.0
+One-line: Add one to maxblocks.
+
+M       bld/generate_cice_decomp.pl
+
+===============================================================
+cice5_20170522
+Originator: jedwards
+Date: 22 May 2017
+Version: 5.0
+One-line config_compsets.xml update (align with cime schema)
+
+M cime_config/config_compsets.xml
+
+===============================================================
+cice5_20170519
+Originator: dbailey
+Date: 19 May 2017
+Version: 5.0
+One-line History updates.
+
+This tag contains changes to history variables as well
+as some test changes and buildcpp change for SCAM mode.
+
+M       cime_config/testdefs/testlist_cice.xml
+M       cime_config/buildcpp
+M       cime_config/namelist_definition_cice.xml
+M       cime_config/config_pes.xml
+M       src/source/ice_history_shared.F90
+M       src/source/ice_history.F90
+M       src/drivers/cesm/CICE_InitMod.F90
+M       src/drivers/cesm/ice_comp_mct.F90
+
+===============================================================
+cice5_20170516
+Originator: dbailey
+Date: 16 May 2017
+Version: 5.0
+One-line Fix cice-pop test.
+
+ M      cime_config
+ A       cime_config/testdefs/testmods_dirs/cice/pop/user_nl_pop
+ D       cime_config/testdefs/testmods_dirs/cice/pop/user_nl_pop2
+ M       cime_config/testdefs/testlist_cice.xml
+
+===============================================================
+cice5_20170515
+Originator: dbailey
+Date: 15 May 2017
+Version: 5.0
+One-line Fix coupled CPP flag.
+
+Fixed bug where the CPP flag, coupled was not activated.
+Also changed CCSMCOUPLED to CESMCOUPLED.
+
+M       cime_config/buildcpp
+M       cime_config/namelist_definition_cice.xml
+M       src/mpi/ice_timers.F90
+M       src/mpi/ice_exit.F90
+M       src/io_netcdf/ice_restart.F90
+M       src/io_netcdf/ice_history_write.F90
+M       src/source/ice_init.F90
+M       src/source/ice_domain.F90
+M       src/source/ice_calendar.F90
+M       src/source/ice_dyn_shared.F90
+M       src/source/ice_itd.F90
+M       src/source/ice_shortwave.F90
+M       src/source/ice_fileunits.F90
+M       src/source/ice_diagnostics.F90
+M       src/source/ice_therm_vertical.F90
+M       src/source/ice_flux.F90
+M       src/source/ice_therm_bl99.F90
+M       src/source/ice_grid.F90
+M       src/source/ice_history_shared.F90
+M       src/source/ice_orbital.F90
+M       src/source/ice_restart_driver.F90
+M       src/io_binary/ice_history_write.F90
+M       src/drivers/cesm/CICE_InitMod.F90
+M       src/drivers/cesm/CICE_RunMod.F90
+M       src/drivers/cesm/CICE_FinalMod.F90
+M       src/io_pio/ice_restart.F90
+M       src/io_pio/ice_history_write.F90
+
+===============================================================
+cice5_20170503
+Originator: dbailey
+Date: 3 May 2017
+Version: 5.0
+One-line Added isotope code and fixed buildcpp.
+
+This update should not be answer changing as the
+isotopes are off by default. When CESM is ready,
+the code in ice_cpl_indicies.F90 needs to be
+updated. Look for ISOTOPE.
+
+Also, the buildcpp script is fixed to allow users
+to change CPP options vi CICE_CONFIG_OPTS.
+
+Deleted the old Latex User Guide. This is now on
+github.
+
+M       cime_config/buildcpp
+M       cime_config/buildnml
+M       cime_config/namelist_definition_cice.xml
+M       src/source/ice_init.F90
+M       src/source/ice_history_bgc.F90
+M       src/source/ice_itd.F90
+M       src/source/ice_fileunits.F90
+M       src/source/ice_mechred.F90
+M       src/source/ice_diagnostics.F90
+M       src/source/ice_therm_vertical.F90
+M       src/source/ice_step_mod.F90
+M       src/source/ice_flux.F90
+M       src/source/ice_therm_itd.F90
+M       src/source/ice_state.F90
+A       src/source/ice_isotope.F90
+M       src/source/ice_atmo.F90
+M       src/source/ice_domain_size.F90
+M       src/drivers/cesm/ice_import_export.F90
+M       src/drivers/cesm/ice_cpl_indices.F90
+D       docs/UsersGuide
+D       docs/UsersGuide/ice_setup.tex
+D       docs/UsersGuide/ice_usrdoc
+D       docs/UsersGuide/ice_usrdoc/node7.html
+D       docs/UsersGuide/ice_usrdoc/node9.html
+D       docs/UsersGuide/ice_usrdoc/WARNINGS
+D       docs/UsersGuide/ice_usrdoc/node10.html
+D       docs/UsersGuide/ice_usrdoc/node20.html
+D       docs/UsersGuide/ice_usrdoc/node12.html
+D       docs/UsersGuide/ice_usrdoc/node30.html
+D       docs/UsersGuide/ice_usrdoc/node22.html
+D       docs/UsersGuide/ice_usrdoc/node40.html
+D       docs/UsersGuide/ice_usrdoc/node14.html
+D       docs/UsersGuide/ice_usrdoc/node32.html
+D       docs/UsersGuide/ice_usrdoc/node24.html
+D       docs/UsersGuide/ice_usrdoc/node42.html
+D       docs/UsersGuide/ice_usrdoc/node16.html
+D       docs/UsersGuide/ice_usrdoc/node34.html
+D       docs/UsersGuide/ice_usrdoc/node26.html
+D       docs/UsersGuide/ice_usrdoc/node18.html
+D       docs/UsersGuide/ice_usrdoc/node36.html
+D       docs/UsersGuide/ice_usrdoc/node28.html
+D       docs/UsersGuide/ice_usrdoc/node38.html
+D       docs/UsersGuide/ice_usrdoc/node2.html
+D       docs/UsersGuide/ice_usrdoc/node4.html
+D       docs/UsersGuide/ice_usrdoc/labels.pl
+D       docs/UsersGuide/ice_usrdoc/node6.html
+D       docs/UsersGuide/ice_usrdoc/images.pl
+D       docs/UsersGuide/ice_usrdoc/node8.html
+D       docs/UsersGuide/ice_usrdoc/ice_usrdoc.html
+D       docs/UsersGuide/ice_usrdoc/images.log
+D       docs/UsersGuide/ice_usrdoc/node11.html
+D       docs/UsersGuide/ice_usrdoc/node21.html
+D       docs/UsersGuide/ice_usrdoc/node13.html
+D       docs/UsersGuide/ice_usrdoc/node31.html
+D       docs/UsersGuide/ice_usrdoc/node23.html
+D       docs/UsersGuide/ice_usrdoc/node41.html
+D       docs/UsersGuide/ice_usrdoc/node15.html
+D       docs/UsersGuide/ice_usrdoc/node33.html
+D       docs/UsersGuide/ice_usrdoc/node25.html
+D       docs/UsersGuide/ice_usrdoc/node17.html
+D       docs/UsersGuide/ice_usrdoc/node35.html
+D       docs/UsersGuide/ice_usrdoc/images.aux
+D       docs/UsersGuide/ice_usrdoc/node27.html
+D       docs/UsersGuide/ice_usrdoc/node19.html
+D       docs/UsersGuide/ice_usrdoc/node37.html
+D       docs/UsersGuide/ice_usrdoc/images.bbl
+D       docs/UsersGuide/ice_usrdoc/node29.html
+D       docs/UsersGuide/ice_usrdoc/images.tex
+D       docs/UsersGuide/ice_usrdoc/node39.html
+D       docs/UsersGuide/ice_usrdoc/ice_usrdoc.css
+D       docs/UsersGuide/ice_usrdoc/internals.pl
+D       docs/UsersGuide/ice_usrdoc/node1.html
+D       docs/UsersGuide/ice_usrdoc/index.html
+D       docs/UsersGuide/ice_usrdoc/images.out
+D       docs/UsersGuide/ice_usrdoc/node3.html
+D       docs/UsersGuide/ice_usrdoc/images.pdf
+D       docs/UsersGuide/ice_usrdoc/node5.html
+D       docs/UsersGuide/ice_history.tex
+D       docs/UsersGuide/ice_nml_example.tex
+D       docs/UsersGuide/master_list.bib
+D       docs/UsersGuide/ice_what_is_cice4.tex
+D       docs/UsersGuide/README_USR
+D       docs/UsersGuide/ice_usrdoc.pdf
+D       docs/UsersGuide/supertabular.sty
+D       docs/UsersGuide/ice_stdout.tex
+D       docs/UsersGuide/ice_restart.tex
+D       docs/UsersGuide/jas.bst
+D       docs/UsersGuide/ice_input_data.tex
+D       docs/UsersGuide/ice_runtypes.tex
+D       docs/UsersGuide/ice_troubleshoot.tex
+D       docs/UsersGuide/ice_change_ncat.tex
+D       docs/UsersGuide/index.html
+D       docs/UsersGuide/ice_nml_var.tex
+D       docs/UsersGuide/Makefile
+D       docs/UsersGuide/natbib.sty
+D       docs/UsersGuide/ice_usrdoc.tex
+D       docs/UsersGuide/ice_build.tex
+
+===============================================================
+cice5_20170424
+Originator: jedwards
+Date: 24 April 2017
+Version: 5.0
+One-line Fixed an OMP issue and efficiency changes.
+
+M       src/drivers/cesm/ice_import_export.F90
+
+===============================================================
+cice5_20170313
+Originator: dbailey
+Date: 13 Mar 2017
+Version: 5.0
+One-line Added freeboard history variable.
+
+
+M       src/source/ice_therm_mushy.F90
+M       src/source/ice_history_shared.F90
+M       src/source/ice_history.F90
+
+===============================================================
+cice5_20170309
+Originator: dbailey
+Date: 09 Mar 2017
+Version: 5.0
+One-line Fixed a couple SIMIP variables.
+
+M       src/source/ice_history.F90
+
+===============================================================
+cice5_20170216
+Originator: dbailey
+Date: 15 Feb 2017
+Version: 5.0
+One-line Fixed some uninitialized variables.
+
+M       src/drivers/cesm/ice_import_export.F90
+M       src/source/ice_grid.F90
+M       src/source/ice_meltpond_lvl.F90
+
+===============================================================
+cice5_20170214
+Originator: dbailey
+Date: 14 Feb 2017
+Version: 5.0
+One-line Fixed testlist and component defs.
+
+Also, fixed the mass transport variables. Bfb except history
+file changes.
+
+M       cime_config/testdefs/testlist_cice.xml
+M       cime_config/config_component.xml
+M       src/source/ice_history.F90
+
+===============================================================
+cice5_20170126
+Originator: mvertens
+Date: 13 Jan 2017
+Version: 5.0
+One-line Added cartesian to possible decomptypes
+
+M       cime_config/config_component.xml
+
+===============================================================
 cice5_20170113
 Originator: mvertens
 Date: 13 Jan 2017
 Version: 5.0
 One-line Added roundrobin to possible decomptypes
-	
+
 M       cime_config/config_component.xml
-	
+
 ===============================================================
 cice5_20170106
 Originator: mvertens
 Date: 06 Jan 2017
 Version: 5.0
 One-line Fixed problem in setting ice_ic for hybrid/branch runs
-	
+
 M       cime_config/buildnml
 M       cime_config/namelist_definition_cice.xml
-	
+
 ===============================================================
 cice5_20170104
 Originator: mvertens
@@ -974,11 +1276,11 @@ A       bld/cice.buildlib
 A       bld/cice.buildnml
 D       bld/cice.buildnml.csh
 D       bld/cice.cpl7.template
-	
+
 M       bld/cice_decomp.xml
 M       bld/configure
 M       bld/generate_cice_decomp.pl
-	
+
 A       cesmtest
 A       cesmtest/testlist_cice.xml
 A       cesmtest/testmods_dirs
@@ -986,7 +1288,7 @@ A       cesmtest/testmods_dirs/cice
 A       cesmtest/testmods_dirs/cice/default
 A       cesmtest/testmods_dirs/cice/default/shell_commands
 A       cesmtest/testmods_dirs/cice/default/user_nl_cice
-	
+
 ===============================================================
 cice5_20150311
 Originator: dbailey
@@ -1140,7 +1442,7 @@ cice5_20150128
 Originator: jedwards
 Date: Jan 28, 2015
 Version: 5.0
-One-line Summary:pio interface fix 
+One-line Summary:pio interface fix
 
 M       src/io_pio/ice_restart.F90
 
@@ -1406,7 +1708,7 @@ cice5_23_cice5.0.4
 Originator: tcraig
 Date: Sep 28, 2014
 Version: 5.0
-One-line Summary: Merge lanl r839 trunk mods 
+One-line Summary: Merge lanl r839 trunk mods
 
 M       src/source/ice_init.F90
 M       src/source/ice_mechred.F90
@@ -1703,21 +2005,21 @@ M      bld/namelist_files/namelist_defaults_cice.xml
 M      src/source/ice_distribution.F90
 M      src/drivers/cesm/ice_comp_mct.F90
 M      bld/cice_decomp.xml
-	
+
 ===============================================================
 cice5_05_cice5.0.4
 Originator: tcraig
-Date: 
+Date:
 Version: 5.0
 One-line Summary: fix missing values on history files
 
 M      src/io_netcdf/ice_history_write.F90
 M      src/io_pio/ice_history_write.F90
-	
+
 ===============================================================
 cice5_04_cice5.0.4
 Originator: tcraig
-Date: 
+Date:
 Version: 5.0
 One-line Summary: cice5 working in cesm1_3_beta07
 
@@ -1727,21 +2029,21 @@ M      bld/namelist_files/namelist_definition.xml
 M      src/mpi/ice_exit.F90
 M      src/source/ice_init.F90
 M      src/source/ice_orbital.F90
-	
+
 ===============================================================
 cice5_03_cice5.0.4
 Originator: tcraig
-Date: 
+Date:
 Version: 5.0
 One-line Summary: minor bug fixes
 
 M      src/source/ice_fileunits.F90
 M      src/input_templates/run_ice.Linux.NCAR.yellowstone
-	
+
 ===============================================================
 cice5_02_cice5.0.4
 Originator: tcraig
-Date: 
+Date:
 Version: 5.0
 One-line Summary: Update capability to run with CESM
 
@@ -1760,7 +2062,7 @@ M      src/drivers/cesm/ice_comp_mct.F90
 ===============================================================
 cice5_01_cice5.0.4
 Originator: tcraig
-Date: 
+Date:
 Version: 5.0
 One-line Summary: Initial capability to run with CESM
 
@@ -1798,11 +2100,11 @@ A      src/drivers/cesm/ice_cpl_indices.F90
 A      src/drivers/cesm/ice_comp_mct.F90
 A      src/drivers/cesm/ice_prescribed_mod.F90
 M      src/comp_ice
-	
+
 ===============================================================
 cice5_00_cice5.0.4
 Originator: tcraig
-Date: 
+Date:
 Version: 5.0
 One-line Summary: Original import of cice5.0.4
 ===============================================================

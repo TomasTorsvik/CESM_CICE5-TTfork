@@ -68,6 +68,9 @@ def _create_namelists(case, confdir, infile, nmlgen):
     if "DNTRAERO=0" in case.get_value("CICE_CPPDEFS"):
         config['ntraero'] = "0"
 
+    if "DNTRISO=0" in case.get_value("CICE_CPPDEFS"):
+        config['ntriso'] = "0"
+
     # Note - xml ICE_NCAT, CICE_DECOMPSETTING, CICE_DECOMPTYPE are used 
     # in setting the cice namelist and are set in buildlib: 
 
@@ -82,11 +85,12 @@ def _create_namelists(case, confdir, infile, nmlgen):
     if nmlgen.get_value('gridcpl_file') == 'UNSET':
         nmlgen.set_value('gridcpl_file', value="unknown_gridcpl_file")
 
+    # note that CICE_DECOMPSETTING is set in call to buildcpp
     if case.get_value('CICE_DECOMPSETTING') == 'null':
-        processor_shape = nmlgen.get_value('processor_shape')
+        config['cice_decomp_setting'] = 'null'
+        processor_shape = nmlgen.get_default('processor_shape', config=config)
     else:
-        # note that CICE_DECOMPSETTING is set in call to buildcpp
-        processor_shape = case.get_value("CICE_DECOMPTYPE")
+        processor_shape = case.get_value("CICE_DECOMPSETTING")
     nmlgen.set_value('processor_shape', value=processor_shape)
 
     # set initial conditions for branch of hybrid runs 
