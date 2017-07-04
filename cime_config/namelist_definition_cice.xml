@@ -366,6 +366,8 @@
       <value hgrid="tnx1v3">bin</value>
       <value hgrid="tnx1v4">bin</value>
       <value hgrid="tnx0.25v1">bin</value>
+      <value hgrid="tnx0.25v3">bin</value>
+      <value hgrid="tnx0.25v4">bin</value>
     </values>
   </entry>
 
@@ -387,7 +389,9 @@
       <value hgrid="tnx1v1">tripole</value>
       <value hgrid="tnx1v3">tripole</value>
       <value hgrid="tnx1v4">tripole</value>
-      <value hgrid="tnx0.25v1">tripole</value> 
+      <value hgrid="tnx0.25v1">tripole</value>
+      <value hgrid="tnx0.25v3">tripole</value>
+      <value hgrid="tnx0.25v4">tripole</value> 
     </values>
   </entry>
 
@@ -411,7 +415,9 @@
       <value hgrid="tnx1v1">$DIN_LOC_ROOT/ocn/pop/tnx1v1/grid/horiz_grid_20120120.ieeer8</value>
       <value hgrid="tnx1v3">$DIN_LOC_ROOT/ocn/micom/tnx1v3/20170612/horiz_grid_20170612.ieeer8</value>
       <value hgrid="tnx1v4">$DIN_LOC_ROOT/ocn/micom/tnx1v4/20170601/horiz_grid_20170601.ieeer8</value> 
-      <value hgrid="tnx0.25v1">$DIN_LOC_ROOT/ocn/pop/tnx0.25v1/grid/horiz_grid_20130930.ieeer8</value> 
+      <value hgrid="tnx0.25v1">$DIN_LOC_ROOT/ocn/pop/tnx0.25v1/grid/horiz_grid_20130930.ieeer8</value>
+      <value hgrid="tnx0.25v3">$DIN_LOC_ROOT/ocn/micom/tnx0.25v3/20170623/horiz_grid_20170623.ieeer8</value>
+      <value hgrid="tnx0.25v4">$DIN_LOC_ROOT/ocn/micom/tnx0.25v4/20170619/horiz_grid_20170619.ieeer8</value> 
     </values>
   </entry>
 
@@ -435,7 +441,9 @@
       <value hgrid="tnx1v1">$DIN_LOC_ROOT/ocn/pop/tnx1v1/grid/topography_20120120.ieeei4</value>
       <value hgrid="tnx1v3">$DIN_LOC_ROOT/ocn/micom/tnx1v3/20170612/topography_20170612.ieeei4</value>
       <value hgrid="tnx1v4">$DIN_LOC_ROOT/ocn/micom/tnx1v4/20170601/topography_20170601.ieeei4</value>
-      <value hgrid="tnx0.25v1">$DIN_LOC_ROOT/ocn/pop/tnx0.25v1/grid/topography_20130930.ieeei4</value> 
+      <value hgrid="tnx0.25v1">$DIN_LOC_ROOT/ocn/pop/tnx0.25v1/grid/topography_20130930.ieeei4</value>
+      <value hgrid="tnx0.25v3">$DIN_LOC_ROOT/ocn/micom/tnx0.25v3/20170623/topography_20170623.ieeei4</value>
+      <value hgrid="tnx0.25v4">$DIN_LOC_ROOT/ocn/micom/tnx0.25v4/20170619/topography_20170619.ieeei4</value> 
     </values>
   </entry>
 
@@ -536,6 +544,8 @@
       <value hgrid ='tnx1v3'>tripole</value>
       <value hgrid ='tnx1v4'>tripole</value>
       <value hgrid ='tnx0.25v1'>tripole</value>
+      <value hgrid ='tnx0.25v3'>tripole</value>
+      <value hgrid ='tnx0.25v4'>tripole</value>
     </values>
   </entry>
 
