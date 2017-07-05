@@ -1,6 +1,6 @@
 #!/bin/csh
 
-set res = (gx3v7 gx1v6 tx0.1v2 ne240np4 tnx1v1 tnx0.25v1)
+set res = (gx3v7 gx1v6 tx0.1v2 ne240np4 tnx1v1 tnx0.25v1 tnx1v3 tnx1v4)
 set pe1 = (1 1 1 1)
 set pex = (500 4000 60000 60000)
 
