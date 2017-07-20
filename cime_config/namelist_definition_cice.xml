@@ -71,6 +71,7 @@
       <value>UNSET</value>
       <value hgrid='gx3v7'>$DIN_LOC_ROOT/ice/cice/b40.t31x3.20th.cice.r.2006-01-01-00000.nc</value>
       <value hgrid='gx1v6'>$DIN_LOC_ROOT/ice/cice/b.e15.B1850G.f09_g16.pi_control.25.cice.r.0041-01-01-00000.nc</value>
+      <value hgrid='gx1v7'>$DIN_LOC_ROOT/ice/cice/b.e15.B1850G.f09_g16.pi_control.25.cice.r.0041-01-01-00000.nc</value>
       <value hgrid='tx0.1v2'>$DIN_LOC_ROOT/ice/cice/g.e11.G.T62_t12.002.cice.r.0016-01-01-00000.nc</value>
       <value hgrid='ar9v3'>$DIN_LOC_ROOT/ice/cice/cice5ic/r26RBRCICE5g0.cice.r.1990-09-01-00000.nc</value>
       <value hgrid='ar9v4'>$DIN_LOC_ROOT/ice/cice/cice5ic/r26RBRCICE5g0.cice.r.1990-09-01-00000.nc</value>
@@ -247,17 +248,17 @@
     </values>
   </entry>
 
-  <!-- <entry id="write_ic"> -->
-  <!--   <type>logical</type>   -->
-  <!--   <category>setup</category>  -->
-  <!--   <group>setup_nml</group> -->
-  <!--   <desc> -->
-  <!--     if true, write initial history file -->
-  <!--   </desc> -->
-  <!--   <values> -->
-  <!--     <value>.false.</value> -->
-  <!--   </values> -->
-  <!-- </entry> -->
+  <entry id="write_ic">
+    <type>logical</type>  
+    <category>setup</category> 
+    <group>setup_nml</group>
+    <desc>
+      if true, write initial state
+    </desc>
+    <values>
+      <value>.false.</value>
+    </values>
+  </entry>
 
   <!-- =========================== -->
   <!-- Diagnostic output -->
@@ -406,6 +407,7 @@
     <values>
       <value cice_mode="prescribed">$ICE_DOMAIN_PATH/$ICE_DOMAIN_FILE</value>
       <value hgrid="gx1v6">$DIN_LOC_ROOT/ocn/pop/gx1v6/grid/horiz_grid_20010402.ieeer8</value> 
+      <value hgrid="gx1v7">$DIN_LOC_ROOT/ocn/pop/gx1v7/grid/horiz_grid_20010402.ieeer8</value> 
       <value hgrid="gx3v7">$DIN_LOC_ROOT/ocn/pop/gx3v7/grid/horiz_grid_20030806.ieeer8</value> 
       <value hgrid="tx0.1v2">$DIN_LOC_ROOT/ocn/pop/tx0.1v2/grid/horiz_grid_200709.ieeer8</value> 
       <value hgrid="tx1v1">$DIN_LOC_ROOT/ocn/pop/tx1v1/grid/horiz_grid_20050510.ieeer8</value>
@@ -432,6 +434,7 @@
     <values>
       <value cice_mode="prescribed">$ICE_DOMAIN_PATH/$ICE_DOMAIN_FILE</value>
       <value hgrid="gx1v6">$DIN_LOC_ROOT/ocn/pop/gx1v6/grid/topography_20090204.ieeei4</value> 
+      <value hgrid="gx1v7">$DIN_LOC_ROOT/ocn/pop/gx1v7/grid/topography_20161215.ieeei4</value> 
       <value hgrid="gx3v7">$DIN_LOC_ROOT/ocn/pop/gx3v7/grid/topography_20100105.ieeei4</value> 
       <value hgrid="tx0.1v2">$DIN_LOC_ROOT/ocn/pop/tx0.1v2/grid/topography_200709.ieeei4</value> 
       <value hgrid="tx1v1">$DIN_LOC_ROOT/ocn/pop/tx1v1/grid/topography_20050510.ieeei4</value>
@@ -485,7 +488,8 @@
       processor shape
     </desc>
     <values>
-      <value>square-pop</value>
+      <value cice_decomp_setting="null">square-ice</value>
+      <value>$CICE_DECOMPSETTING</value>
     </values>
   </entry>
 
@@ -764,6 +768,31 @@
   </entry>
 
   <entry id="restart_aero">
+    <type>logical</type>  
+    <category>tracers</category> 
+    <group>tracer_nml</group>
+    <desc>
+      Aerosol restart from file.
+    </desc>
+    <values>
+      <value>.false.</value>
+    </values>
+  </entry>
+
+  <entry id="tr_iso">
+    <type>logical</type>  
+    <category>tracers</category> 
+    <group>tracer_nml</group>
+    <desc>
+      Aerosol tracers.
+    </desc>
+    <values>
+      <value>.true.</value>
+      <value ntriso="0">.false.</value>
+    </values>
+  </entry>
+
+  <entry id="restart_iso">
     <type>logical</type>  
     <category>tracers</category> 
     <group>tracer_nml</group>
@@ -2062,7 +2091,7 @@
     <desc>
     </desc>
     <values>
-      <value>.false.</value>
+      <value>.true.</value>
       <value cice_mode='prescribed'>.false.</value>
     </values>
   </entry>
@@ -2074,7 +2103,7 @@
     <desc>
     </desc>
     <values>
-      <value>.false.</value>
+      <value>.true.</value>
       <value cice_mode='prescribed'>.false.</value>
     </values>
   </entry>
@@ -2086,7 +2115,7 @@
     <desc>
     </desc>
     <values>
-      <value>.false.</value>
+      <value>.true.</value>
       <value cice_mode='prescribed'>.false.</value>
     </values>
   </entry>
@@ -2098,7 +2127,7 @@
     <desc>
     </desc>
     <values>
-      <value>.false.</value>
+      <value>.true.</value>
       <value cice_mode='prescribed'>.false.</value>
     </values>
   </entry>
@@ -2110,7 +2139,7 @@
     <desc>
     </desc>
     <values>
-      <value>.false.</value>
+      <value>.true.</value>
       <value cice_mode='prescribed'>.false.</value>
     </values>
   </entry>
@@ -2122,7 +2151,7 @@
     <desc>
     </desc>
     <values>
-      <value>.false.</value>
+      <value>.true.</value>
       <value cice_mode='prescribed'>.false.</value>
     </values>
   </entry>
@@ -2159,7 +2188,7 @@
     <desc>
     </desc>
     <values>
-      <value>.false.</value>
+      <value>.true.</value>
       <value cice_mode='prescribed'>.false.</value>
     </values>
   </entry>
@@ -2221,7 +2250,7 @@
     <desc>
     </desc>
     <values>
-      <value>mxxxx</value>
+      <value>mdhxx</value>
       <value hgrid="ar9v4">mdhxx</value>
       <value cice_mode='prescribed'>xxxxx</value>
     </values>
@@ -2234,7 +2263,7 @@
     <desc>
     </desc>
     <values>
-      <value>mxxxx</value>
+      <value>mdhxx</value>
       <value hgrid="ar9v4">mdhxx</value>
       <value cice_mode='prescribed'>xxxxx</value>
     </values>
@@ -2271,7 +2300,7 @@
     <desc>
     </desc>
     <values>
-      <value>mxxxx</value>
+      <value>mdhxx</value>
       <value hgrid="ar9v4">mdhxx</value>
       <value cice_mode='prescribed'>xxxxx</value>
     </values>
@@ -2340,7 +2369,7 @@
     <desc>
     </desc>
     <values>
-      <value>mxxxx</value>
+      <value>mdhxx</value>
       <value hgrid="ar9v4">mdhxx</value>
       <value cice_mode='prescribed'>xxxxx</value>
     </values>
@@ -2525,7 +2554,7 @@
     <desc>
     </desc>
     <values>
-      <value>mxxxx</value>
+      <value>mdhxx</value>
       <value hgrid="ar9v4">mdhxx</value>
       <value cice_mode='prescribed'>xxxxx</value>
     </values>
@@ -2538,7 +2567,7 @@
     <desc>
     </desc>
     <values>
-      <value>xxxxx</value>
+      <value>mdhxx</value>
       <value hgrid="ar9v4">mdhxx</value>
       <value cice_mode='prescribed'>xxxxx</value>
     </values>
@@ -2551,7 +2580,7 @@
     <desc>
     </desc>
     <values>
-      <value>xxxxx</value>
+      <value>mdhxx</value>
       <value hgrid="ar9v4">mdhxx</value>
       <value cice_mode='prescribed'>xxxxx</value>
     </values>
@@ -2772,7 +2801,7 @@
     <desc>
     </desc>
     <values>
-      <value>xxxxx</value>
+      <value>mxxxx</value>
       <value hgrid="ar9v4">mdhxx</value>
       <value cice_mode='prescribed'>xxxxx</value>
     </values>
@@ -2876,7 +2905,7 @@
     <desc>
     </desc>
     <values>
-      <value>mxxxx</value>
+      <value>mdxxx</value>
       <value hgrid="ar9v4">mdhxx</value>
       <value cice_mode='prescribed'>xxxxx</value>
     </values>
@@ -2889,7 +2918,7 @@
     <desc>
     </desc>
     <values>
-      <value>mxxxx</value>
+      <value>mdxxx</value>
       <value cice_mode='prescribed'>xxxxx</value>
       <value hgrid="ar9v3">mxxxx</value>
       <value hgrid="ar9v4">mdhxx</value>
@@ -2933,7 +2962,7 @@
     <desc>
     </desc>
     <values>
-      <value>mxxxx</value>
+      <value>mdxxx</value>
       <value cice_mode='prescribed'>xxxxx</value>
       <value hgrid="ar9v3">mxxxx</value>
       <value hgrid="ar9v4">mdhxx</value>
@@ -2947,7 +2976,7 @@
     <desc>
     </desc>
     <values>
-      <value>mxxxx</value>
+      <value>mdxxx</value>
       <value hgrid="ar9v4">mdhxx</value>
       <value cice_mode='prescribed'>xxxxx</value>
     </values>
@@ -2960,7 +2989,7 @@
     <desc>
     </desc>
     <values>
-      <value>mxxxx</value>
+      <value>mdxxx</value>
       <value cice_mode='prescribed'>xxxxx</value>
       <value hgrid="ar9v3">mxxxx</value>
       <value hgrid="ar9v4">mdhxx</value>
@@ -2974,7 +3003,7 @@
     <desc>
     </desc>
     <values>
-      <value>mxxxx</value>
+      <value>mdxxx</value>
       <value cice_mode='prescribed'>xxxxx</value>
       <value hgrid="ar9v3">mxxxx</value>
       <value hgrid="ar9v4">mdhxx</value>
@@ -3072,7 +3101,7 @@
     <desc>
     </desc>
     <values>
-      <value>mxxxx</value>
+      <value>mdhxx</value>
       <value hgrid="ar9v4">mdhxx</value>
       <value cice_mode='prescribed'>xxxxx</value>
     </values>
@@ -3308,7 +3337,7 @@
     <desc>
     </desc>
     <values>
-      <value>mxxxx</value>
+      <value>mdxxx</value>
       <value cice_mode='prescribed'>xxxxx</value>
       <value hgrid="ar9v3">mxxxx</value>
       <value hgrid="ar9v4">mdhxx</value>
@@ -3322,7 +3351,7 @@
     <desc>
     </desc>
     <values>
-      <value>mxxxx</value>
+      <value>mdxxx</value>
       <value cice_mode='prescribed'>xxxxx</value>
       <value hgrid="ar9v3">mxxxx</value>
       <value hgrid="ar9v4">mdhxx</value>
@@ -3336,7 +3365,7 @@
     <desc>
     </desc>
     <values>
-      <value>mxxxx</value>
+      <value>mdxxx</value>
       <value cice_mode='prescribed'>xxxxx</value>
       <value hgrid="ar9v3">mxxxx</value>
       <value hgrid="ar9v4">mdhxx</value>
@@ -3350,7 +3379,7 @@
     <desc>
     </desc>
     <values>
-      <value>mxxxx</value>
+      <value>mdxxx</value>
       <value cice_mode='prescribed'>xxxxx</value>
       <value hgrid="ar9v3">mxxxx</value>
       <value hgrid="ar9v4">mdhxx</value>
@@ -3444,7 +3473,7 @@
     <desc>
     </desc>
     <values>
-      <value>mxxxx</value>
+      <value>mdhxx</value>
       <value cice_mode='prescribed'>xxxxx</value>
       <value hgrid="ar9v3">mxxxx</value>
       <value hgrid="ar9v4">mdhxx</value>
@@ -3458,7 +3487,7 @@
     <desc>
     </desc>
     <values>
-      <value>mxxxx</value>
+      <value>mdhxx</value>
       <value cice_mode='prescribed'>xxxxx</value>
       <value hgrid="ar9v3">mxxxx</value>
       <value hgrid="ar9v4">mdhxx</value>
@@ -3472,7 +3501,49 @@
     <desc>
     </desc>
     <values>
-      <value>mxxxx</value>
+      <value>mdhxx</value>
+      <value cice_mode='prescribed'>xxxxx</value>
+      <value hgrid="ar9v3">mxxxx</value>
+      <value hgrid="ar9v4">mdhxx</value>
+    </values>
+  </entry>
+
+  <entry id="f_fswsfcn">
+    <type>char</type>
+    <category>history</category>
+    <group>icefields_nml</group>
+    <desc>
+    </desc>
+    <values>
+      <value>mdhxx</value>
+      <value cice_mode='prescribed'>xxxxx</value>
+      <value hgrid="ar9v3">mxxxx</value>
+      <value hgrid="ar9v4">mdhxx</value>
+    </values>
+  </entry>
+
+  <entry id="f_fswintn">
+    <type>char</type>
+    <category>history</category>
+    <group>icefields_nml</group>
+    <desc>
+    </desc>
+    <values>
+      <value>mdhxx</value>
+      <value cice_mode='prescribed'>xxxxx</value>
+      <value hgrid="ar9v3">mxxxx</value>
+      <value hgrid="ar9v4">mdhxx</value>
+    </values>
+  </entry>
+
+  <entry id="f_fswthrun">
+    <type>char</type>
+    <category>history</category>
+    <group>icefields_nml</group>
+    <desc>
+    </desc>
+    <values>
+      <value>mdhxx</value>
       <value cice_mode='prescribed'>xxxxx</value>
       <value hgrid="ar9v3">mxxxx</value>
       <value hgrid="ar9v4">mdhxx</value>
@@ -3486,7 +3557,7 @@
     <desc>
     </desc>
     <values>
-      <value>mxxxx</value>
+      <value>mdhxx</value>
       <value cice_mode='prescribed'>xxxxx</value>
       <value hgrid="ar9v3">mxxxx</value>
       <value hgrid="ar9v4">mdhxx</value>
@@ -3832,7 +3903,7 @@
     <desc>
     </desc>
     <values>
-      <value>mxxxx</value>
+      <value>mdhxx</value>
       <value cice_mode='prescribed'>xxxxx</value>
       <value hgrid="ar9v3">mxxxx</value>
       <value hgrid="ar9v4">mdhxx</value>
@@ -4277,6 +4348,30 @@
     </values>
   </entry>
 
+  <entry id="f_fiso_atm">
+    <type>char</type>
+    <category>history</category>
+    <group>icefields_bgc_nml</group>
+    <desc>
+    </desc>
+    <values>
+      <value>mxxxx</value>
+      <value cice_mode='prescribed'>xxxxx</value>
+    </values>
+  </entry>
+
+  <entry id="f_fiso_ocn">
+    <type>char</type>
+    <category>history</category>
+    <group>icefields_bgc_nml</group>
+    <desc>
+    </desc>
+    <values>
+      <value>mxxxx</value>
+      <value cice_mode='prescribed'>xxxxx</value>
+    </values>
+  </entry>
+
   <entry id="f_aero">
     <type>char</type>
     <category>history</category>
@@ -4290,6 +4385,30 @@
   </entry>
 
   <entry id="f_aeron">
+    <type>char</type>
+    <category>history</category>
+    <group>icefields_bgc_nml</group>
+    <desc>
+    </desc>
+    <values>
+      <value>xxxxx</value>
+      <value cice_mode='prescribed'>xxxxx</value>
+    </values>
+  </entry>
+
+  <entry id="f_iso">
+    <type>char</type>
+    <category>history</category>
+    <group>icefields_bgc_nml</group>
+    <desc>
+    </desc>
+    <values>
+      <value>mxxxx</value>
+      <value cice_mode='prescribed'>xxxxx</value>
+    </values>
+  </entry>
+
+  <entry id="f_ison">
     <type>char</type>
     <category>history</category>
     <group>icefields_bgc_nml</group>

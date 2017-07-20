@@ -259,6 +259,7 @@
            f_siflcondtop = 'x', &
            f_siflcondbot = 'x', &
            f_sipr = 'x', &
+           f_sifb = 'x', &
            f_siflsaltbot = 'x', &
            f_siflfwbot = 'x', &
            f_siflfwdrain = 'x', &
@@ -277,6 +278,9 @@
            f_sistremax = 'x', &
            f_aicen     = 'x', f_vicen      = 'x', &
            f_vsnon     = 'x',                     &
+           f_fswsfcn   = 'x',                     &
+           f_fswintn   = 'x',                     &
+           f_fswthrun  = 'x',                     &
            f_trsig     = 'm', f_icepresent = 'm', &
            f_fsurf_ai  = 'm', f_fcondtop_ai= 'm', &
            f_fmeltt_ai = 'm',                     &
@@ -388,6 +392,7 @@
            f_siflcondtop, &
            f_siflcondbot, &
            f_sipr, &
+           f_sifb, &
            f_siflsaltbot, &
            f_siflfwbot, &
            f_siflfwdrain, &
@@ -406,6 +411,9 @@
            f_sistremax, &
            f_aicen,     f_vicen    , &
            f_vsnon,                  &
+           f_fswsfcn,                &
+           f_fswintn,                &
+           f_fswthrun,               &
            f_trsig,     f_icepresent,&
            f_fsurf_ai,  f_fcondtop_ai,&
            f_fmeltt_ai, &
@@ -516,6 +524,7 @@
            n_siflcondtop,  &
            n_siflcondbot,  &
            n_sipr,  &
+           n_sifb,  &
            n_siflsaltbot,  &
            n_siflfwbot,  &
            n_siflfwdrain,  &
@@ -532,7 +541,10 @@
            n_sirdgthick, &
            n_sistreave, &
            n_sistremax, &
-           n_vsnon,                        &
+           n_vsnon,     &
+           n_fswsfcn,   &
+           n_fswintn,   &
+           n_fswthrun,   &
            n_fhocn      , n_fhocn_ai   , &
            n_fswthru    , n_fswthru_ai , &
            n_strairx    , n_strairy    , &
@@ -602,7 +614,7 @@
         iday = mday
         isec = sec - dt
 
-#ifdef CCSMCOUPLED
+#ifdef CESMCOUPLED
         if (write_ic) isec = sec
 #endif
         ! construct filename

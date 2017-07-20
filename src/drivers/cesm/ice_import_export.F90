@@ -10,24 +10,26 @@ module ice_import_export
   use ice_constants   , only: vonkar, zref, iceruf
   use ice_constants   , only: p001
   use ice_blocks      , only: block, get_block, nx_block, ny_block
-  use ice_flux        , only: strairxt, strairyt, strocnxt, strocnyt           
+  use ice_flux        , only: strairxt, strairyt, strocnxt, strocnyt
   use ice_flux        , only: alvdr, alidr, alvdf, alidf, Tref, Qref, Uref
   use ice_flux        , only: flat, fsens, flwout, evap, fswabs, fhocn, fswthru
   use ice_flux        , only: fresh, fsalt, zlvl, uatm, vatm, potT, Tair, Qa
   use ice_flux        , only: rhoa, swvdr, swvdf, swidr, swidf, flw, frain
   use ice_flux        , only: fsnow, uocn, vocn, sst, ss_tltx, ss_tlty, frzmlt
-  use ice_flux        , only: sss, tf, wind, fsw, init_flux_atm, init_flux_ocn, faero_atm
-  use ice_flux        , only: faero_ocn
+  use ice_flux        , only: sss, tf, wind, fsw, init_flux_atm, init_flux_ocn
+  use ice_flux        , only: faero_atm, faero_ocn
+  use ice_flux        , only: fiso_atm, fiso_ocn, fiso_rain, fiso_evap, &
+                              Qa_iso, Qref_iso, HDO_ocn, H2_18O_ocn, H2_16O_ocn
   use ice_flux        , only: send_i2x_per_cat, fswthrun_ai
   use ice_ocean       , only: tfrz_option
   use ice_atmo        , only: Cdn_atm
   use ice_state       , only: vice, vsno, aice, aicen_init, trcr
-  use ice_state       , only: tr_aero, tr_iage, tr_FY, tr_pond, tr_lvl 
+  use ice_state       , only: tr_aero, tr_iso, tr_iage, tr_FY, tr_pond, tr_lvl
   use ice_domain      , only: nblocks, blocks_ice, halo_info, distrb_info
   use ice_domain_size , only: nx_global, ny_global, block_size_x, block_size_y, max_blocks, ncat
   use ice_grid        , only: tlon, tlat, tarea, tmask, anglet, hm
   use ice_grid        , only: grid_type, t2ugrid_vector
-  use ice_boundary    , only: ice_HaloUpdate 
+  use ice_boundary    , only: ice_HaloUpdate
   use ice_fileunits   , only: nu_diag
   use ice_prescribed_mod
   use ice_cpl_indices
@@ -61,7 +63,7 @@ contains
     integer,parameter                :: nflds=15,nfldv=6
     real (kind=dbl_kind),allocatable :: aflds(:,:,:,:)
     real (kind=dbl_kind)             :: workx, worky
-    real (kind=dbl_kind) :: MIN_RAIN_TEMP, MAX_SNOW_TEMP 
+    real (kind=dbl_kind) :: MIN_RAIN_TEMP, MAX_SNOW_TEMP
     logical (kind=log_kind)          :: first_call = .true.
     character(len=*),parameter :: subname = 'ice_import'
     !-----------------------------------------------------
@@ -83,7 +85,7 @@ contains
 
     n=0
     do iblk = 1, nblocks
-       this_block = get_block(blocks_ice(iblk),iblk)         
+       this_block = get_block(blocks_ice(iblk),iblk)
        ilo = this_block%ilo
        ihi = this_block%ihi
        jlo = this_block%jlo
@@ -145,8 +147,16 @@ contains
              flw  (i,j,iblk)   = aflds(i,j,13,iblk)
              frain(i,j,iblk)   = aflds(i,j,14,iblk)
              fsnow(i,j,iblk)   = aflds(i,j,15,iblk)
+          enddo    !i
+       enddo    !j
+    enddo        !iblk
+    !$OMP END PARALLEL DO
 
-             if (rasm_snowrain_split) then
+    if (rasm_snowrain_split) then
+       !$OMP PARALLEL DO PRIVATE(iblk,i,j)
+       do iblk = 1, nblocks
+          do j = 1,ny_block
+             do i = 1,nx_block
                 !--- Artificial correction to snow and rain for RASM
                 if (Tair(i,j,iblk)<MIN_RAIN_TEMP) then
                    fsnow(i,j,iblk)=fsnow(i,j,iblk)+frain(i,j,iblk)
@@ -158,16 +168,16 @@ contains
                    frain(i,j,iblk)=fsnow(i,j,iblk)+frain(i,j,iblk)
                    fsnow(i,j,iblk)=frain(i,j,iblk)
                    frain(i,j,iblk)=frain(i,j,iblk)*(Tair(i,j,iblk)-MIN_RAIN_TEMP) / &
-                                                    (MAX_SNOW_TEMP-MIN_RAIN_TEMP)
+                        (MAX_SNOW_TEMP-MIN_RAIN_TEMP)
                    fsnow(i,j,iblk)=fsnow(i,j,iblk)-frain(i,j,iblk)
                 endif
                 !--- end artificial RASM correction
-             endif  ! rasm_snowrain_split
+             enddo    !i
+          enddo    !j
+       enddo        !iblk
+       !$OMP END PARALLEL DO
+    endif  ! rasm_snowrain_split
 
-          enddo    !i
-       enddo    !j
-    enddo        !iblk
-    !$OMP END PARALLEL DO
 
     deallocate(aflds)
     allocate(aflds(nx_block,ny_block,nfldv,nblocks))
@@ -219,12 +229,12 @@ contains
     deallocate(aflds)
 
     !-------------------------------------------------------
-    ! Set aerosols from coupler 
+    ! Set aerosols from coupler
     !-------------------------------------------------------
 
     n=0
     do iblk = 1, nblocks
-       this_block = get_block(blocks_ice(iblk),iblk)         
+       this_block = get_block(blocks_ice(iblk),iblk)
        ilo = this_block%ilo
        ihi = this_block%ihi
        jlo = this_block%jlo
@@ -248,6 +258,25 @@ contains
                   + x2i(index_x2i_Faxa_dstwet4,n) &
                   + x2i(index_x2i_Faxa_dstdry4,n)
 
+             if (index_x2i_Sa_shum_HDO > 0) then
+
+             Qa_iso(i,j,1,iblk)  = x2i(index_x2i_Sa_shum_HDO,n)
+             Qa_iso(i,j,2,iblk)  = x2i(index_x2i_Sa_shum_16O,n)
+             Qa_iso(i,j,3,iblk)  = x2i(index_x2i_Sa_shum_18O,n)
+
+             fiso_rain(i,j,1,iblk) = x2i(index_x2i_Faxa_rain_HDO,n)
+             fiso_rain(i,j,2,iblk) = x2i(index_x2i_Faxa_rain_16O,n)
+             fiso_rain(i,j,3,iblk) = x2i(index_x2i_Faxa_rain_18O,n)
+
+             fiso_atm(i,j,1,iblk) = x2i(index_x2i_Faxa_snow_HDO,n)
+             fiso_atm(i,j,2,iblk) = x2i(index_x2i_Faxa_snow_16O,n)
+             fiso_atm(i,j,3,iblk) = x2i(index_x2i_Faxa_snow_18O,n)
+
+             HDO_ocn(i,j,iblk)    = x2i(index_x2i_So_roce_HDO,n)
+             H2_16O_ocn(i,j,iblk) = x2i(index_x2i_So_roce_16O,n)
+             H2_18O_ocn(i,j,iblk) = x2i(index_x2i_So_roce_18O,n)
+
+             endif
           enddo    !i
        enddo    !j
 
@@ -273,16 +302,16 @@ contains
           do i = 1,nx_block
 
              ! ocean
-             workx      = uocn  (i,j,iblk) ! currents, m/s 
+             workx      = uocn  (i,j,iblk) ! currents, m/s
              worky      = vocn  (i,j,iblk)
-             uocn(i,j,iblk) = workx*cos(ANGLET(i,j,iblk)) & ! convert to POP grid 
+             uocn(i,j,iblk) = workx*cos(ANGLET(i,j,iblk)) & ! convert to POP grid
                   + worky*sin(ANGLET(i,j,iblk))
              vocn(i,j,iblk) = worky*cos(ANGLET(i,j,iblk)) &
                   - workx*sin(ANGLET(i,j,iblk))
 
              workx      = ss_tltx  (i,j,iblk)           ! sea sfc tilt, m/m
              worky      = ss_tlty  (i,j,iblk)
-             ss_tltx(i,j,iblk) = workx*cos(ANGLET(i,j,iblk)) & ! convert to POP grid 
+             ss_tltx(i,j,iblk) = workx*cos(ANGLET(i,j,iblk)) & ! convert to POP grid
                   + worky*sin(ANGLET(i,j,iblk))
              ss_tlty(i,j,iblk) = worky*cos(ANGLET(i,j,iblk)) &
                   - workx*sin(ANGLET(i,j,iblk))
@@ -301,7 +330,7 @@ contains
     !$OMP END PARALLEL DO
     call t_stopf ('cice_imp_ocn')
 
-    ! Interpolate ocean dynamics variables from T-cell centers to 
+    ! Interpolate ocean dynamics variables from T-cell centers to
     ! U-cell centers.
 
     if (.not.prescribed_ice) then
@@ -325,7 +354,7 @@ contains
 
              ! atmosphere
              workx      = uatm(i,j,iblk) ! wind velocity, m/s
-             worky      = vatm(i,j,iblk) 
+             worky      = vatm(i,j,iblk)
              uatm (i,j,iblk) = workx*cos(ANGLET(i,j,iblk)) & ! convert to POP grid
                              + worky*sin(ANGLET(i,j,iblk))   ! note uatm, vatm, wind
              vatm (i,j,iblk) = worky*cos(ANGLET(i,j,iblk)) & ! are on the T-grid here
@@ -344,7 +373,7 @@ contains
 
   !===============================================================================
 
-  subroutine ice_export( i2x )   
+  subroutine ice_export( i2x )
 
     !-----------------------------------------------------
     !
@@ -352,7 +381,7 @@ contains
     real(r8), intent(inout) :: i2x(:,:)
     !
     ! Local Variables
-    integer :: i, j, iblk, n, ij 
+    integer :: i, j, iblk, n, ij
     integer :: n2 ! thickness category index
     integer :: ilo, ihi, jlo, jhi !beginning and end of physical domain
     integer (kind=int_kind)                                :: icells ! number of ocean/ice cells
@@ -380,10 +409,23 @@ contains
     !calculate ice thickness from aice and vice. Also
     !create Tsrf from the first tracer (trcr) in ice_state.F
 
-    !$OMP PARALLEL DO PRIVATE(iblk,i,j,workx,worky)
+    ailohi(:,:,:) = c0
+    Tsrf(:,:,:) = c0
+    tauxa(:,:,:) = c0
+    tauya(:,:,:) = c0
+    tauxo(:,:,:) = c0
+    tauyo(:,:,:) = c0
+
+    !$OMP PARALLEL DO PRIVATE(iblk,i,j,workx,worky, this_block, ilo, ihi, jlo, jhi)
     do iblk = 1, nblocks
-       do j = 1, ny_block
-          do i = 1, nx_block
+       this_block = get_block(blocks_ice(iblk),iblk)
+       ilo = this_block%ilo
+       ihi = this_block%ihi
+       jlo = this_block%jlo
+       jhi = this_block%jhi
+
+       do j = jlo,jhi
+          do i = ilo,ihi
 
              ! ice fraction
              ailohi(i,j,iblk) = min(aice(i,j,iblk), c1)
@@ -413,8 +455,14 @@ contains
     !$OMP END PARALLEL DO
 
     do iblk = 1, nblocks
-       do j = 1, ny_block
-          do i = 1, nx_block
+       this_block = get_block(blocks_ice(iblk),iblk)
+       ilo = this_block%ilo
+       ihi = this_block%ihi
+       jlo = this_block%jlo
+       jhi = this_block%jhi
+
+       do j = jlo,jhi
+          do i = ilo,ihi
              if (tmask(i,j,iblk) .and. ailohi(i,j,iblk) < c0 ) then
                 flag = .true.
              endif
@@ -423,8 +471,13 @@ contains
     end do
     if (flag) then
        do iblk = 1, nblocks
-          do j = 1, ny_block
-             do i = 1, nx_block
+          this_block = get_block(blocks_ice(iblk),iblk)
+          ilo = this_block%ilo
+          ihi = this_block%ihi
+          jlo = this_block%jlo
+          jhi = this_block%jhi
+          do j = jlo,jhi
+             do i = ilo,ihi
                 if (tmask(i,j,iblk) .and. ailohi(i,j,iblk) < c0 ) then
                    write(nu_diag,*) &
                         ' (ice) send: ERROR ailohi < 0.0 ',i,j,ailohi(i,j,iblk)
@@ -441,7 +494,7 @@ contains
 
     n=0
     do iblk = 1, nblocks
-       this_block = get_block(blocks_ice(iblk),iblk)         
+       this_block = get_block(blocks_ice(iblk),iblk)
        ilo = this_block%ilo
        ihi = this_block%ihi
        jlo = this_block%jlo
@@ -456,11 +509,11 @@ contains
 
              if ( tmask(i,j,iblk)) i2x(:,n) = c0
 
-             !-------states-------------------- 
-             i2x(index_i2x_Si_ifrac ,n)    = ailohi(i,j,iblk)   
+             !-------states--------------------
+             i2x(index_i2x_Si_ifrac ,n)    = ailohi(i,j,iblk)
 
              if ( tmask(i,j,iblk) .and. ailohi(i,j,iblk) > c0 ) then
-                !-------states-------------------- 
+                !-------states--------------------
                 i2x(index_i2x_Si_t     ,n)    = Tsrf(i,j,iblk)
                 i2x(index_i2x_Si_avsdr ,n)    = alvdr(i,j,iblk)
                 i2x(index_i2x_Si_anidr ,n)    = alidr(i,j,iblk)
@@ -484,17 +537,17 @@ contains
                 endif
 
                 !--- a/i fluxes computed by ice
-                i2x(index_i2x_Faii_taux ,n)   = tauxa(i,j,iblk)    
-                i2x(index_i2x_Faii_tauy ,n)   = tauya(i,j,iblk)    
-                i2x(index_i2x_Faii_lat  ,n)   = flat(i,j,iblk)     
-                i2x(index_i2x_Faii_sen  ,n)   = fsens(i,j,iblk)    
-                i2x(index_i2x_Faii_lwup ,n)   = flwout(i,j,iblk)   
-                i2x(index_i2x_Faii_evap ,n)   = evap(i,j,iblk)     
+                i2x(index_i2x_Faii_taux ,n)   = tauxa(i,j,iblk)
+                i2x(index_i2x_Faii_tauy ,n)   = tauya(i,j,iblk)
+                i2x(index_i2x_Faii_lat  ,n)   = flat(i,j,iblk)
+                i2x(index_i2x_Faii_sen  ,n)   = fsens(i,j,iblk)
+                i2x(index_i2x_Faii_lwup ,n)   = flwout(i,j,iblk)
+                i2x(index_i2x_Faii_evap ,n)   = evap(i,j,iblk)
                 i2x(index_i2x_Faii_swnet,n)   = fswabs(i,j,iblk)
 
                 !--- i/o fluxes computed by ice
                 i2x(index_i2x_Fioi_melth,n)   = fhocn(i,j,iblk)
-                i2x(index_i2x_Fioi_swpen,n)   = fswthru(i,j,iblk) ! hf from melting          
+                i2x(index_i2x_Fioi_swpen,n)   = fswthru(i,j,iblk) ! hf from melting
                 i2x(index_i2x_Fioi_meltw,n)   = fresh(i,j,iblk)   ! h2o flux from melting    ???
                 i2x(index_i2x_Fioi_salt ,n)   = fsalt(i,j,iblk)   ! salt flux from melting   ???
                 i2x(index_i2x_Fioi_taux ,n)   = tauxo(i,j,iblk)   ! stress : i/o zonal       ???
@@ -505,6 +558,20 @@ contains
                  i2x(index_i2x_Fioi_bcphi ,n)  = faero_ocn(i,j,2,iblk)  ! hydrophilic bc
                 if ( index_i2x_Fioi_flxdst > 0) &
                  i2x(index_i2x_Fioi_flxdst,n)  = faero_ocn(i,j,3,iblk)  ! dust
+
+                if (index_i2x_Fioi_meltw_HDO > 0) then
+
+                i2x(index_i2x_Fioi_meltw_HDO,n) = fiso_ocn (i,j,1,iblk)  !  Isotopes to ocean
+                i2x(index_i2x_Fioi_meltw_16O,n) = fiso_ocn (i,j,2,iblk)  !  Isotopes to ocean
+                i2x(index_i2x_Fioi_meltw_18O,n) = fiso_ocn (i,j,3,iblk)  !  Isotopes to ocean
+                i2x(index_i2x_Faii_evap_HDO ,n) = fiso_evap(i,j,1,iblk)  !  Isotope evap to atm
+                i2x(index_i2x_Faii_evap_16O ,n) = fiso_evap(i,j,2,iblk)  !  Isotope evap to atm
+                i2x(index_i2x_Faii_evap_18O ,n) = fiso_evap(i,j,3,iblk)  !  Isotope evap to atm
+                i2x(index_i2x_Si_qref_HDO   ,n) = Qref_iso(i,j,1,iblk)  !  Isotope qref to atm
+                i2x(index_i2x_Si_qref_16O   ,n) = Qref_iso(i,j,2,iblk)  !  Isotope qref to atm
+                i2x(index_i2x_Si_qref_18O   ,n) = Qref_iso(i,j,3,iblk)  !  Isotope qref to atm
+
+                endif
              end if
           enddo    !i
        enddo    !j
@@ -513,7 +580,7 @@ contains
     if (send_i2x_per_cat) then
        n=0
        do iblk = 1, nblocks
-          this_block = get_block(blocks_ice(iblk),iblk)         
+          this_block = get_block(blocks_ice(iblk),iblk)
           ilo = this_block%ilo
           ihi = this_block%ihi
           jlo = this_block%jlo
