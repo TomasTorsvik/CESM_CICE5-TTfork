@@ -67,7 +67,7 @@
 
       use ice_calendar, only: yday, sec, calendar_type, nextsw_cday, days_per_year
       use ice_constants, only: c0, c2, p5, pi, secday
-      use shr_orb_mod, only: shr_orb_decl
+      use shr_orb_mod, only: shr_orb_decl, shr_orb_cosz
 
       integer (kind=int_kind), intent(in) :: &
          nx_block, ny_block, & ! block dimensions
