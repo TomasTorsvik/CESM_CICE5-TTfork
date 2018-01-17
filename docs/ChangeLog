@@ -1,4 +1,118 @@
 ===============================================================
+cice5_20170927
+Originator: dbailey
+Date: 27 September 2017
+Version: 5.0
+One-line: Fix  NTASKS_PER_INST_ICE.
+
+M       cime_config/buildcpp
+
+===============================================================
+cice5_20170920
+Originator: dbailey
+Date: 20 September 2017
+Version: 5.0
+One-line: Add NTASKS_PER_INST_ICE.
+
+M       cime_config/buildcpp
+
+===============================================================
+cice5_20170912
+Originator: dbailey
+Date: 11 September 2017
+Version: 5.0
+One-line: Add CMIP6 usermods.
+
+A       cime_config/usermods_dirs
+A       cime_config/usermods_dirs/cmip6
+A       cime_config/usermods_dirs/cmip6/user_nl_cice
+
+===============================================================
+cice5_20170911
+Originator: dbailey
+Date: 11 September 2017
+Version: 5.0
+One-line: Updated SIMIP variables.
+
+Hopefully the last iteration of SIMIP variable updates. Also
+remove f45 tests.
+
+M       cime_config/testdefs/testlist_cice.xml
+M       src/source/ice_flux.F90
+M       src/source/ice_history.F90
+M       src/source/ice_history_shared.F90
+M       src/source/ice_step_mod.F90
+M       src/source/ice_therm_vertical.F90
+
+===============================================================
+cice5_20170825
+Originator: dbailey
+Date: 25 August 2017
+Version: 5.0
+One-line: Fix ice_ic.
+
+Fix ice_ic behaviour for startup runs.
+PIO related changes from jedwards.
+
+M       cime_config/config_component.xml
+M       cime_config/namelist_definition_cice.xml
+M       cime_config/testdefs/testlist_cice.xml
+M       src/drivers/cesm/ice_comp_mct.F90
+M       src/drivers/cesm/ice_prescribed_mod.F90
+M       src/io_pio/ice_history_write.F90
+M       src/io_pio/ice_pio.F90
+M       src/io_pio/ice_restart.F90
+
+===============================================================
+cice5_20170727
+Originator: dbailey
+Date: 27 July 2017
+Version: 5.0
+One-line: Change default albedos.
+
+Keep options for -phys cam4 and cam5.
+
+M       cime_config/buildnml
+M       cime_config/namelist_definition_cice.xml
+
+===============================================================
+cice5_20170724
+Originator: dbailey
+Date: 24 July 2017
+Version: 5.0
+One-line: Add workaround for shortwave.
+
+M       src/source/ice_therm_mushy.F90
+
+===============================================================
+cice5_20170713
+Originator: dbailey
+Date: 13 July 2017
+Version: 5.0
+One-line: Fix handling of tracers in buildnml.
+
+M       cime_config/buildnml
+M       cime_config/namelist_definition_cice.xml
+
+===============================================================
+cice5_20170627
+Originator: dbailey
+Date: 26 Jun 2017
+Version: 5.0
+One-line: Remove ESMF driver.
+
+D       src/drivers/cesm/ice_comp_esmf.F90
+
+===============================================================
+cice5_20170626
+Originator: dbailey
+Date: 26 Jun 2017
+Version: 5.0
+One-line: Bug fix for lcdf64.
+
+M       src/io_pio/ice_history_write.F90
+
+===============================================================
 cice5_20170607
 Originator: dbailey
 Date: 07 Jun 2017
