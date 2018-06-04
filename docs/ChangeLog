@@ -1,4 +1,171 @@
 ===============================================================
+cice5_20180424
+Originator: dbailey
+Date:  24 Apr 2018
+Version: 5.0
+One-line: Merge Youngsung's halo changes.
+
+	modified:   cime_config/testdefs/testlist_cice.xml
+	modified:   src/mpi/ice_boundary.F90
+
+===============================================================
+cice5_20180418
+Originator: dbailey
+Date: 17 Apr 2018
+Version: 5.0
+One-line: Fix attributes for sicompstren.
+
+        modified:   src/source/ice_history.F90
+
+===============================================================
+cice5_20180417
+Originator: dbailey
+Date: 17 Apr 2018
+Version: 5.0
+One-line: Fix some python issues.
+
+	modified:   cime_config/buildcpp
+	modified:   cime_config/buildnml
+
+===============================================================
+cice5_20180416
+Originator: dbailey
+Date: 16 Apr 2018
+Version: 5.0
+One-line: Add model_doi_url.
+
+	modified:   src/drivers/cesm/ice_comp_mct.F90
+	modified:   src/io_pio/ice_history_write.F90
+	modified:   src/source/ice_history_shared.F90
+
+===============================================================
+cice5_20180403
+Originator: dbailey
+Date: 03 Apr 2018
+Version: 5.0
+One-line: Change default r_snw.
+
+        modified:   cime_config/namelist_definition_cice.xml
+
+===============================================================
+cice5_20180213
+Originator: dbailey
+Date: 13 Feb 2018
+Version: 5.0
+One-line: 
+
+        modified:   cime_config/testdefs/testlist_cice.xml
+
+===============================================================
+cice5_20180130
+Originator: jedwards
+Date: 30 Jan 2018
+Version: 5.0
+One-line: Add double precision history option.
+
+	modified:   cime_config/namelist_definition_cice.xml
+        modified:   cime_config/testdefs/testmods_dirs/cice/default/user_nl_cice
+        modified:   cime_config/testdefs/testmods_dirs/cice/pop/user_nl_cice
+        modified:   cime_config/testdefs/testmods_dirs/cice/step/user_nl_cice
+        modified:   src/io_pio/ice_history_write.F90
+        modified:   src/io_pio/ice_pio.F90
+        modified:   src/source/ice_grid.F90
+        modified:   src/source/ice_history_shared.F90
+        modified:   src/source/ice_init.F90
+
+===============================================================
+cice5_20180124
+Originator: jedwards
+Date: 24 Jan 2018
+Version: 5.0
+One-line: Bug fix in ITD.
+
+	modified:   src/source/ice_itd.F90
+
+===============================================================
+cice5_20180122
+Originator: jedwards
+Date: 22 Jan 2018
+Version: 5.0
+One-line: Bug fix in thermo.
+
+	modified:   src/source/ice_therm_vertical.F90
+
+===============================================================
+cice5_20180118
+Originator: jedwards
+Date: 18 Jan 2018
+Version: 5.0
+One-line: Correction to flux convergence to atmice flux
+
+M       src/source/ice_atmo.F90
+
+===============================================================
+cice5_20180116
+Originator: jedwards
+Date: 16 Jan 2018
+Version: 5.0
+One-line: Add flux convergence to atmice flux
+
+M       cime_config/buildcpp
+M       src/drivers/cesm/ice_comp_mct.F90
+M       src/source/ice_atmo.F90
+
+===============================================================
+cice5_20171220
+Originator: dbailey
+Date: 20 December 2017
+Version: 5.0
+One-line: Add new tx0.1v3 settings
+
+M       cime_config/namelist_definition_cice.xml
+
+===============================================================
+cice5_20171218
+Originator: dbailey
+Date: 18 December 2017
+Version: 5.0
+One-line: Remove initial barrier in ice_comp_mct
+
+M       src/drivers/cesm/ice_comp_mct.F90
+
+===============================================================
+cice5_20171208
+Originator: dbailey
+Date: 08 December 2017
+Version: 5.0
+One-line: Update hobart PE counts.
+
+Also delete PDFs and grid information.
+
+M       cime_config/config_pes.xml
+D       src/doc
+D       src/doc/cicedoc.pdf
+D       src/doc/PDF
+D       src/doc/PDF/HHL_OceMod2013.pdf
+D       src/doc/PDF/TFW_JGR2013.pdf
+D       src/doc/PDF/Hunke_JCP2001.pdf
+D       src/doc/PDF/BL_NCAR2007.pdf
+D       src/doc/PDF/BFLM_OceMod2013.pdf
+D       src/doc/PDF/Lipscomb_JGR2001.pdf
+D       src/doc/PDF/LAUR-03-2219.pdf
+D       src/doc/PDF/DB_JCP2000.pdf
+D       src/doc/PDF/HD_MWR2002.pdf
+D       src/doc/PDF/THB_JGR2013.pdf
+D       src/doc/PDF/BL_JGR1999.pdf
+D       src/doc/PDF/CGHM_JPO2004.pdf
+D       src/doc/PDF/HD_JPO1997.pdf
+D       src/doc/PDF/FSFH_JGR2012.pdf
+D       src/doc/PDF/LH_MWR2004.pdf
+D       src/doc/PDF/CMHB_IJHPCA2014.pdf
+D       src/doc/PDF/HZ_MWR1999.pdf
+D       src/doc/PDF/HBBLH_JClim2012.pdf
+D       src/doc/PDF/LHMJ_JGR07.pdf
+D       src/doc/PDF/Elliot_etal_JGR2012.pdf
+D       src/input_templates/gx1
+D       src/input_templates/gx3
+
+===============================================================
 cice5_20170927
 Originator: dbailey
 Date: 27 September 2017

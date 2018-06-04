@@ -64,6 +64,7 @@ module ice_comp_mct
   use ice_global_reductions
   use ice_broadcast
   use CICE_RunMod
+  use ice_atmo, only : flux_convergence_tolerance, flux_convergence_max_iteration, use_coldair_outbreak_mod
 
 ! !PUBLIC MEMBER FUNCTIONS:
   implicit none
@@ -121,7 +122,7 @@ contains
     use CICE_InitMod
     use ice_restart_shared, only: runid, runtype, restart_dir, restart_format
     use ice_history,        only: accum_hist
-    use ice_history_shared, only: history_dir, history_file
+    use ice_history_shared, only: history_dir, history_file, model_doi_url
 !
 ! !ARGUMENTS:
     type(ESMF_Clock)         , intent(inout) :: EClock
@@ -166,7 +167,6 @@ contains
 !EOP
 !-----------------------------------------------------------------------
 
-    call t_barrierf('cice_init_total_BARRIER',MPI_COMM_ICE)
     call t_startf ('cice_init_total')
 
     !--------------------------------------------------------------------------
@@ -191,6 +191,9 @@ contains
     ! Determine orbital parameters
     call seq_infodata_GetData(infodata, orb_eccen=eccen, orb_mvelpp=mvelpp, &
          orb_lambm0=lambm0, orb_obliqr=obliqr)
+
+    ! Get model_doi_url
+    call seq_infodata_GetData(infodata, model_doi_url=model_doi_url)
 
     !   call shr_init_memusage()
 
@@ -252,10 +255,18 @@ contains
        endif
     endif
 
+    ! atmice flux calculation
+    call seq_infodata_GetData(infodata, &
+         coldair_outbreak_mod=use_coldair_outbreak_mod, &
+         flux_convergence=flux_convergence_tolerance, &
+         flux_max_iteration=flux_convergence_max_iteration)
+
     if (my_task == master_task) then
        write(nu_diag,*) trim(subname),' inst_name   = ',trim(inst_name)
        write(nu_diag,*) trim(subname),' inst_index  = ',inst_index
        write(nu_diag,*) trim(subname),' inst_suffix = ',trim(inst_suffix)
+       write(nu_diag,*) trim(subname),' flux_convergence = ', flux_convergence_tolerance
+       write(nu_diag,*) trim(subname),' flux_convergence_max_iteration = ', flux_convergence_max_iteration
     endif
 
     !---------------------------------------------------------------------------
