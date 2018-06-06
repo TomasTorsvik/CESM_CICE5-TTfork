@@ -1367,6 +1367,23 @@
   </entry>
 
   <!-- =========================== -->
+  <!-- snowphys_nml -->
+  <!-- =========================== -->
+
+   <entry id="blowingsnow">
+     <type>char</type>
+     <category>snowphys</category>
+     <group>snowphys_nml</group>
+     <desc>
+       Blowing snow parameterization (none, lecomte2013)
+     </desc>
+     <values>
+       <value>none</value>
+     </values>
+   </entry> 
+
+
+  <!-- =========================== -->
   <!-- forcing_nml -->
   <!-- =========================== -->
 
