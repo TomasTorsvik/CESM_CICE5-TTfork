@@ -2985,7 +2985,21 @@
 
 
 
-  <entry id="f_dsnow">
+  <entry id="f_sn2oc">
+    <type>char</type>
+    <category>history</category>
+    <group>icefields_nml</group>
+    <desc>
+    </desc>
+    <values>
+      <value>mxxxx</value>
+      <value hgrid="ar9v4">mdhxx</value>
+      <value cice_mode='prescribed'>xxxxx</value>
+    </values>
+  </entry>
+
+
+  <entry id="f_snfonice">
     <type>char</type>
     <category>history</category>
     <group>icefields_nml</group>
@@ -2997,6 +3011,8 @@
       <value cice_mode='prescribed'>xxxxx</value>
     </values>
   </entry>
+
+
 
   <entry id="f_meltt">
     <type>char</type>

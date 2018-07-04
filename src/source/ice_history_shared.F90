@@ -215,6 +215,9 @@
            f_Tref      = 'm', f_Qref       = 'm', &
            f_congel    = 'm', f_frazil     = 'm', &
            f_snoice    = 'm', f_dsnow      = 'm', &
+!jd
+           f_sn2oc     = 'm', f_snfonice   = 'm', &
+!jd
            f_meltt     = 'm', f_melts      = 'm', &
            f_meltb     = 'm', f_meltl      = 'm', &
            f_fresh     = 'm', f_fresh_ai   = 'm', &
@@ -355,6 +358,9 @@
            f_Tref,      f_Qref     , &
            f_congel,    f_frazil   , &
            f_snoice,    f_dsnow    , &
+!jd
+           f_sn2oc,     f_snfonice , &
+!jd
            f_meltt,     f_melts    , &
            f_meltb,     f_meltl    , &
            f_fresh,     f_fresh_ai , &
@@ -511,6 +517,9 @@
            n_Tref       , n_Qref       , &
            n_congel     , n_frazil     , &
            n_snoice     , n_dsnow      , &
+!jd
+           n_sn2oc      , n_snfonice , &
+!jd
            n_meltt      , n_melts      , &
            n_meltb      , n_meltl      , &
            n_fresh      , n_fresh_ai   , &

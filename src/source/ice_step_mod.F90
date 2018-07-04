@@ -202,7 +202,8 @@
       use ice_therm_vertical, only: frzmlt_bottom_lateral, thermo_vertical
       use ice_timers, only: ice_timer_start, ice_timer_stop, timer_ponds
 !jd - Blowing snow modification
-      use ice_snowphys, only: blowingsnow,snowphys_snowfonice, snowfonicen, snow2ocnn
+      use ice_snowphys, only: blowingsnow,snowphys_snowfonice, &
+           snowfonicen, snow2ocnn, snowfonice, snow2ocn
 !jd
 
       real (kind=dbl_kind), intent(in) :: &
@@ -800,6 +801,10 @@
                             meltt   (:,:,iblk),  melts   (:,:,iblk),  &
                             meltb   (:,:,iblk),                       &
                             congel  (:,:,iblk),  snoice  (:,:,iblk),  &
+!jd
+                            snow2ocnn(:,:,n,iblk), snow2ocn(:,:,iblk),  &
+                            snowfonicen(:,:,n,iblk), snowfonice(:,:,iblk),  &
+!jd
                             Uref=Uref(:,:,iblk), Urefn=Urefn,         &
                             Qref_iso=Qref_iso(:,:,:,iblk), &
                             Qrefn_iso=Qrefn_iso(:,:,:),&

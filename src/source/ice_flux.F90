@@ -630,6 +630,9 @@
                           Cdn_ocn_floe, Cdn_ocn_skin, formdrag
       use ice_state, only: aice, vice, trcr, tr_iage, nt_iage
       use ice_constants, only: vonkar,zref,iceruf
+!jd
+      use ice_snowphys, only: snow2ocn, snowfonice
+!jd
 
       fsurf  (:,:,:) = c0
       fcondtop(:,:,:)= c0
@@ -638,6 +641,10 @@
       frazil (:,:,:) = c0
       frazil_diag (:,:,:) = c0
       snoice (:,:,:) = c0
+!jd
+      snow2ocn  (:,:,:) = c0
+      snowfonice(:,:,:) = c0
+!jd
       dsnow  (:,:,:) = c0
       meltt  (:,:,:) = c0
       melts  (:,:,:) = c0
@@ -777,6 +784,10 @@
                                meltt,  melts,        &
                                meltb,                &
                                congel,  snoice,      &
+!jd
+                               snow2ocnn, snow2ocn,  &
+                               snowfonicen,snowfonice, &
+!jd
                                Uref,     Urefn,      &
                                Qref_iso, Qrefn_iso,  &
                                fiso_evap,fiso_evapn, &
@@ -821,6 +832,10 @@
           meltbn  , & ! bottom ice melt                 (m)
           meltsn  , & ! snow melt                       (m)
           congeln , & ! congelation ice growth          (m)
+!jd
+          snow2ocnn,  &! snow blowing of ice            
+          snowfonicen,&! fraction of snow kept on ice
+!jd 
           snoicen     ! snow-ice growth                 (m)
            
       real (kind=dbl_kind), dimension(nx_block,ny_block), optional, intent(in):: &
@@ -859,6 +874,10 @@
           meltb   , & ! bottom ice melt                 (m)
           melts   , & ! snow melt                       (m)
           congel  , & ! congelation ice growth          (m)
+!jd
+          snow2ocn,  &! snow blowing of ice            
+          snowfonice,&! fraction of snow kept on ice
+!jd 
           snoice      ! snow-ice growth                 (m)
 
       real (kind=dbl_kind), dimension(nx_block,ny_block), optional, &
@@ -937,6 +956,9 @@
          congel   (i,j) = congel   (i,j) + congeln (i,j)*aicen(i,j)
          snoice   (i,j) = snoice   (i,j) + snoicen (i,j)*aicen(i,j)
 
+         ! Blowing snow 
+         snow2ocn (i,j) = snow2ocn (i,j) + snow2ocnn(i,j)*aicen(i,j)
+         snowfonice(i,j)= snowfonice(i,j)+snowfonicen(i,j)*aicen(i,j)
       enddo                     ! ij
       
       end subroutine merge_fluxes
