@@ -332,6 +332,10 @@
       call broadcast_scalar (f_frazil, master_task)
       call broadcast_scalar (f_snoice, master_task)
       call broadcast_scalar (f_dsnow, master_task)
+!jd
+      call broadcast_scalar (f_sn2oc, master_task)
+      call broadcast_scalar (f_snfonice, master_task)
+!jd
       call broadcast_scalar (f_meltt, master_task)
       call broadcast_scalar (f_melts, master_task)
       call broadcast_scalar (f_meltb, master_task)
@@ -748,6 +752,18 @@
              "snow formation",                                      &
              "none", mps_to_cmpdy/dt, c0,                               &
              ns1, f_dsnow)
+
+!jd
+         call define_hist_field(n_sn2oc,"snow2ocn","kg/m2/s",tstr2D, tcstr, &
+             "Snow blowing into ocean",                                     &
+             "none", c1, c0,                               &
+             ns1, f_sn2oc)
+
+         call define_hist_field(n_snfonice,"snfonice","1",tstr2D, tcstr, &
+             "Fraction of snow remaining on ice during preciptation and wind",                                     &
+             "none", c1, c0,                               &
+             ns1, f_snfonice)
+!jd
       
          call define_hist_field(n_meltt,"meltt","cm/day",tstr2D, tcstr, &
              "top ice melt",                                          &
@@ -1634,6 +1650,7 @@
           stressp_4, stressm_4, stress12_4, sig1, sig2, &
           mlt_onset, frz_onset, dagedtt, dagedtd, fswint_ai, keffn_top, &
           snowfrac, alvdr_ai, alvdf_ai, alidr_ai, alidf_ai, Tbot, Tsnic
+      use ice_snowphys, only: snowfonice, snow2ocn
       use ice_atmo, only: formdrag, Cd_atm
       use ice_meltpond_cesm, only: hs0
       use ice_history_shared ! almost everything
@@ -1930,6 +1947,12 @@
              call accum_hist_field(n_snoice, iblk, snoice(:,:,iblk), a2D)
          if (f_dsnow (1:1) /= 'x') &
              call accum_hist_field(n_dsnow, iblk, dsnow(:,:,iblk), a2D)
+!jd
+         if (f_sn2oc (1:1) /= 'x') &
+             call accum_hist_field(n_sn2oc, iblk, snow2ocn(:,:,iblk), a2D)
+         if (f_snfonice (1:1) /= 'x') &
+             call accum_hist_field(n_snfonice, iblk, snowfonice(:,:,iblk), a2D)
+!jd
          if (f_meltt  (1:1) /= 'x') &
              call accum_hist_field(n_meltt,  iblk, meltt(:,:,iblk), a2D)
          if (f_melts  (1:1) /= 'x') &

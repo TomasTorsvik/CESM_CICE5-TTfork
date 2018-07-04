@@ -83,6 +83,7 @@
       use ice_meltpond_topo, only: hp1, restart_pond_topo
       use ice_meltpond_lvl, only: restart_pond_lvl, dpscale, frzpnd, &
                                   rfracmin, rfracmax, pndaspect, hs1
+      use ice_snowphys, only: blowingsnow
       use ice_aerosol, only: restart_aero
       use ice_isotope, only: restart_iso
       use ice_therm_shared, only: ktherm, calc_Tsfc, conduct
@@ -151,6 +152,9 @@
         hs0,            dpscale,         frzpnd,                        &
         rfracmin,       rfracmax,        pndaspect,     hs1,            &
         hp1
+
+      namelist /snowphys_nml/ &
+        blowingsnow
 
       namelist /forcing_nml/ &
         atmbndy,        fyear_init,      ycycle,        atm_data_format,&
@@ -266,6 +270,7 @@
       albsnowv  = 0.98_dbl_kind   ! cold snow albedo, visible
       albsnowi  = 0.70_dbl_kind   ! cold snow albedo, near IR
       ahmax     = 0.3_dbl_kind    ! thickness above which ice albedo is constant (m)
+      blowingsnow='none'          ! No blowing snow as default, alternative 'lecomte2013'
       atmbndy   = 'default'       ! or 'constant'
 
       fyear_init = 1900           ! first year of forcing cycle
@@ -366,6 +371,9 @@
                if (nml_error /= 0) exit
             print*,'Reading ponds_nml'
                read(nu_nml, nml=ponds_nml,iostat=nml_error)
+               if (nml_error /= 0) exit
+            print*,'Reading snowphys_nml'
+               read(nu_nml, nml=snowphys_nml,iostat=nml_error)
                if (nml_error /= 0) exit
             print*,'Reading forcing_nml'
                read(nu_nml, nml=forcing_nml,iostat=nml_error)
@@ -746,6 +754,7 @@
       call broadcast_scalar(rfracmin,           master_task)
       call broadcast_scalar(rfracmax,           master_task)
       call broadcast_scalar(pndaspect,          master_task)
+      call broadcast_scalar(blowingsnow,        master_task)
       call broadcast_scalar(albicev,            master_task)
       call broadcast_scalar(albicei,            master_task)
       call broadcast_scalar(albsnowv,           master_task)
@@ -948,6 +957,8 @@
          if (tr_pond .and. .not. tr_pond_lvl) &
          write(nu_diag,1000) ' pndaspect                 = ', pndaspect
 
+         write(nu_diag,1030) ' blowingsnow               = ', &
+                               trim(blowingsnow)
          write(nu_diag,1020) ' ktherm                    = ', ktherm
          if (ktherm == 1) &
          write(nu_diag,1030) ' conduct                   = ', conduct

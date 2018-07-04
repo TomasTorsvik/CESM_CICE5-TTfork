@@ -1367,6 +1367,23 @@
   </entry>
 
   <!-- =========================== -->
+  <!-- snowphys_nml -->
+  <!-- =========================== -->
+
+   <entry id="blowingsnow">
+     <type>char</type>
+     <category>snowphys</category>
+     <group>snowphys_nml</group>
+     <desc>
+       Blowing snow parameterization (none, lecomte2013)
+     </desc>
+     <values>
+       <value>none</value>
+     </values>
+   </entry> 
+
+
+  <!-- =========================== -->
   <!-- forcing_nml -->
   <!-- =========================== -->
 
@@ -2968,7 +2985,21 @@
 
 
 
-  <entry id="f_dsnow">
+  <entry id="f_sn2oc">
+    <type>char</type>
+    <category>history</category>
+    <group>icefields_nml</group>
+    <desc>
+    </desc>
+    <values>
+      <value>mxxxx</value>
+      <value hgrid="ar9v4">mdhxx</value>
+      <value cice_mode='prescribed'>xxxxx</value>
+    </values>
+  </entry>
+
+
+  <entry id="f_snfonice">
     <type>char</type>
     <category>history</category>
     <group>icefields_nml</group>
@@ -2980,6 +3011,8 @@
       <value cice_mode='prescribed'>xxxxx</value>
     </values>
   </entry>
+
+
 
   <entry id="f_meltt">
     <type>char</type>
