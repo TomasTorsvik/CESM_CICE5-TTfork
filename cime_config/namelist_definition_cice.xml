@@ -1382,6 +1382,30 @@
      </values>
    </entry> 
 
+   <entry id="rhos">
+     <type>real</type>
+     <category>snowphys</category>
+     <group>snowphys_nml</group>
+     <desc>
+       Constant snow density (real)
+     </desc>
+     <values>
+       <value>330.0</value>
+     </values>
+   </entry> 
+
+   <entry id="ksno">
+     <type>real</type>
+     <category>snowphys</category>
+     <group>snowphys_nml</group>
+     <desc>
+       Snow thermal conductivity (real)
+     </desc>
+     <values>
+       <value>0.3</value>
+     </values>
+   </entry> 
+
 
   <!-- =========================== -->
   <!-- forcing_nml -->
