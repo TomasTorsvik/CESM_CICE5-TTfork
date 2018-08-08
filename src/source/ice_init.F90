@@ -39,7 +39,7 @@
 
       use ice_age, only: restart_age
       use ice_broadcast, only: broadcast_scalar, broadcast_array
-      use ice_constants, only: c0, c1, puny
+      use ice_constants, only: c0, c1, puny, rhos, ksno
       use ice_diagnostics, only: diag_file, print_global, print_points, latpnt, lonpnt
       use ice_domain_size, only: max_nstrm, nilyr, nslyr, max_ntrcr, ncat, n_aero, n_iso
       use ice_fileunits, only: nu_nml, nu_diag, nml_filename, diag_type, &
@@ -154,7 +154,7 @@
         hp1
 
       namelist /snowphys_nml/ &
-        blowingsnow
+        blowingsnow, rhos, ksno
 
       namelist /forcing_nml/ &
         atmbndy,        fyear_init,      ycycle,        atm_data_format,&
@@ -755,6 +755,8 @@
       call broadcast_scalar(rfracmax,           master_task)
       call broadcast_scalar(pndaspect,          master_task)
       call broadcast_scalar(blowingsnow,        master_task)
+      call broadcast_scalar(rhos,               master_task)
+      call broadcast_scalar(ksno,               master_task)
       call broadcast_scalar(albicev,            master_task)
       call broadcast_scalar(albicei,            master_task)
       call broadcast_scalar(albsnowv,           master_task)
