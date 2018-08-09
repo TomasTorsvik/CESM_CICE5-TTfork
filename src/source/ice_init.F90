@@ -961,6 +961,8 @@
 
          write(nu_diag,1030) ' blowingsnow               = ', &
                                trim(blowingsnow)
+         write(nu_diag,1000) ' rhos                      = ', rhos
+         write(nu_diag,1000) ' ksno                      = ', ksno
          write(nu_diag,1020) ' ktherm                    = ', ktherm
          if (ktherm == 1) &
          write(nu_diag,1030) ' conduct                   = ', conduct
