@@ -1383,7 +1383,7 @@
        Blowing snow parameterization (none, lecomte2013)
      </desc>
      <values>
-       <value>none</value>
+       <value>lecomte2013</value>
      </values>
    </entry> 
 
