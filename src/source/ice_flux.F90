@@ -66,6 +66,9 @@
          strinty , & ! divergence of internal ice stress, y (N/m^2)
          daidtd  , & ! ice area tendency due to transport   (1/s)
          dvidtd  , & ! ice volume tendency due to transport (m/s)
+!jd
+         dvsdtd  , & ! snow volume tendency due to transport (m/s)
+!jd
          dagedtd , & ! ice age tendency due to transport (s/s)
          dardg1dt, & ! rate of area loss by ridging ice (1/s)
          dardg2dt, & ! rate of area gain by new ridges (1/s)
@@ -711,7 +714,8 @@
 
       subroutine init_history_dyn
 
-      use ice_state, only: aice, vice, trcr, tr_iage, nt_iage
+!jd      use ice_state, only: aice, vice, trcr, tr_iage, nt_iage
+      use ice_state, only: aice, vice, vsno, trcr, tr_iage, nt_iage
 
       sig1    (:,:,:) = c0
       sig2    (:,:,:) = c0
@@ -729,6 +733,9 @@
       opening (:,:,:) = c0
       daidtd  (:,:,:) = aice(:,:,:) ! temporary initial area
       dvidtd  (:,:,:) = vice(:,:,:) ! temporary initial volume
+!jd
+      dvsdtd  (:,:,:) = vsno(:,:,:) ! temporary initial volume
+!jd
       if (tr_iage) &
          dagedtd (:,:,:) = trcr(:,:,nt_iage,:) ! temporary initial age
       fm      (:,:,:) = c0

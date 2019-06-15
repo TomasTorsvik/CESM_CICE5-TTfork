@@ -1214,7 +1214,8 @@
       use ice_dyn_evp, only: evp
       use ice_dyn_eap, only: eap
       use ice_dyn_shared, only: kdyn
-      use ice_flux, only: daidtd, dvidtd, init_history_dyn, dagedtd
+!jd      use ice_flux, only: daidtd, dvidtd, init_history_dyn, dagedtd
+      use ice_flux, only: daidtd, dvidtd, dvsdtd, init_history_dyn, dagedtd
       use ice_grid, only: tmask
       use ice_itd, only: aggregate
       use ice_state, only: nt_qsno, trcrn, vsnon, aicen, vicen, ntrcr, &
@@ -1312,6 +1313,9 @@
          do j = jlo,jhi
          do i = ilo,ihi
             dvidtd(i,j,iblk) = (vice(i,j,iblk) - dvidtd(i,j,iblk)) /dt
+!jd
+            dvsdtd(i,j,iblk) = (vsno(i,j,iblk) - dvsdtd(i,j,iblk)) /dt
+!jd
             daidtd(i,j,iblk) = (aice(i,j,iblk) - daidtd(i,j,iblk)) /dt
             if (tr_iage) &
                dagedtd(i,j,iblk)= (trcr(i,j,nt_iage,iblk)-dagedtd(i,j,iblk))/dt
