@@ -460,7 +460,7 @@
       <value hgrid="tx1v1">$DIN_LOC_ROOT/ocn/pop/tx1v1/grid/topography_20050510.ieeei4</value>
       <value hgrid="ar9v3">$DIN_LOC_ROOT/ocn/pop/ar9v3/grid/kmt.ar9v3.ocn.ChanBarrier.20100622.ieeei4</value>
       <value hgrid="ar9v4">$DIN_LOC_ROOT/ice/cice/ar9v3_20110106.kmt</value>
-      <value hgrid="us20">$DIN_LOC_ROOT/ice/cice/domain.ocn.us20.20110426.nc</value>
+      <value hgrid="us20">$DIN_LOC_ROOT/ice/cice/domain.ocn.us20.20110426.nc</value> 
       <value hgrid="tnx2v1">$DIN_LOC_ROOT/ocn/pop/tnx2v1/grid/topography_20130206.ieeei4</value>
       <value hgrid="tnx1v1">$DIN_LOC_ROOT/ocn/pop/tnx1v1/grid/topography_20120120.ieeei4</value>
       <value hgrid="tnx1v3">$DIN_LOC_ROOT/ocn/micom/tnx1v3/20170612/topography_20170612.ieeei4</value>
@@ -3012,6 +3012,7 @@
     </values>
   </entry>
 
+<<<<<<< HEAD
 
 
 
@@ -3030,6 +3031,9 @@
 
 
   <entry id="f_snfonice">
+=======
+  <entry id="f_dsnow">
+>>>>>>> origin/featureCESMNCARBeta_trunk2.0-7
     <type>char</type>
     <category>history</category>
     <group>icefields_nml</group>

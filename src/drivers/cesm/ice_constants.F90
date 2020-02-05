@@ -31,12 +31,20 @@
 
       public
 
+!jd
+      !-----------------------------------------------------------------
+      ! physical variables, should not be declared as constants
+      !-----------------------------------------------------------------
+      real (kind=dbl_kind) :: &
+         rhos      = 330.0_dbl_kind   ,&! density of snow (kg/m^3)
+         ksno   = 0.30_dbl_kind         ! thermal conductivity of snow  (W/m/deg)
+!jd
       !-----------------------------------------------------------------
       ! physical constants
       !-----------------------------------------------------------------
 
       real (kind=dbl_kind), parameter :: &
-         rhos      = 330.0_dbl_kind   ,&! density of snow (kg/m^3)
+!jd         rhos      = 330.0_dbl_kind   ,&! density of snow (kg/m^3)
          rhoi      = SHR_CONST_RHOICE ,&! density of ice (kg/m^3)
          rhow      = SHR_CONST_RHOSW  ,&! density of seawater (kg/m^3)
          cp_air    = SHR_CONST_CPDAIR ,&! specific heat of air (J/kg/K)
@@ -87,7 +95,7 @@
          kice   = 2.03_dbl_kind  ,&! thermal conductivity of fresh ice(W/m/deg)
          kseaice= 2.00_dbl_kind  ,&! thermal conductivity of sea ice (W/m/deg)
                                    ! (used in zero layer thermodynamics option)
-         ksno   = 0.30_dbl_kind  ,&! thermal conductivity of snow  (W/m/deg)
+!jd         ksno   = 0.30_dbl_kind  ,&! thermal conductivity of snow  (W/m/deg)
          zref   = 10._dbl_kind   ,&! reference height for stability (m)
 !         hs0   = 0.03_dbl_kind,   &! parameter for delta-Eddington snow frac
 !         hsmin = 0.0001_dbl_kind, &! minimum snow thickness for dEdd
