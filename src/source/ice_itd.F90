@@ -2563,9 +2563,11 @@
          n                , & ! category index
          ij                   ! combined horizontal index
 
-      real (kind=dbl_kind), parameter :: &
-         max_error = puny*Lfresh*rhos ! max error in zero layer energy check
-                                      ! (so max volume error = puny)
+!jd      real (kind=dbl_kind), parameter :: &
+!jd         max_error = puny*Lfresh*rhos ! max error in zero layer energy check
+!jd                                      ! (so max volume error = puny)
+      real (kind=dbl_kind) :: &
+           max_error ! max error in zero layer energy check 
 
       real (kind=dbl_kind), dimension (nx_block,ny_block,ncat) :: &
          eicen     ! energy of melting for each ice layer (J/m^2)
@@ -2583,7 +2585,10 @@
       !-----------------------------------------------------------------
       ! Initialize
       !-----------------------------------------------------------------
-
+!jd
+      max_error = puny*Lfresh*rhos ! max error in zero layer energy check
+                                   ! (so max volume error = puny)
+!jd
       l_stop = .false.
       istop = 0
       jstop = 0

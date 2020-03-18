@@ -241,6 +241,9 @@
       real (kind=dbl_kind), dimension (nx_block,ny_block) :: &
          fadvocn ! advective heat flux to ocean
 
+!jd Approximation of Tsnice
+      real (kind=dbl_kind) :: ksh, kih
+
       !-----------------------------------------------------------------
       ! Initialize
       !-----------------------------------------------------------------
@@ -422,8 +425,14 @@
          i = indxi(ij)
          j = indxj(ij)
 
-         Tsnice(i,j) = (hslyr(ij)*zTsn(ij,nslyr) + hilyr(ij)*zTin(ij,1)) &
-                    / (hslyr(ij)+hilyr(ij))
+!jd         Tsnice(i,j) = (hslyr(ij)*zTsn(ij,nslyr) + hilyr(ij)*zTin(ij,1)) &
+!jd              / (hslyr(ij)+hilyr(ij))
+
+         ksh = ksno*hilyr(ij)
+         kih = kice*hslyr(ij)
+         Tsnice(i,j) = (ksh*zTsn(ij,nslyr) + kih*zTin(ij,1)) / (ksh + kih )
+         
+
       enddo
 
       !-----------------------------------------------------------------
@@ -2387,7 +2396,7 @@
                - fsnow(i,j)*Lfresh - fadvocn(i,j)) * dt
          ferr = abs(efinal(ij)-einit(ij)-einp) / dt
 
-         if (ferr > ferrmax) then
+         if (ferr > c2*ferrmax) then
             l_stop = .true.
             istop = i
             jstop = j
