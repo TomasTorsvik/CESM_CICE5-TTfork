@@ -684,9 +684,9 @@
       Cdn_atm(:,:,:) = (vonkar/log(zref/iceruf)) &
                      * (vonkar/log(zref/iceruf)) ! atmo drag for RASM
 
+        Cd_atm(:,:,:)= c0
       if (formdrag) then
         Cdn_atm_rdg (:,:,:) = c0
-        Cd_atm(:,:,:)= c0
         Cdn_atm_floe(:,:,:) = c0
         Cdn_atm_pond(:,:,:) = c0
         Cdn_atm_skin(:,:,:) = c0
