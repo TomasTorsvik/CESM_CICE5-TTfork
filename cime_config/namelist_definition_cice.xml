@@ -1705,6 +1705,272 @@
   </entry>
 
   <!-- =========================== -->
+  <!-- da_nml -->
+  <!-- =========================== -->
+
+  <entry id="da_ice">
+    <type>logical</type>
+    <category>dataassimilation</category>
+    <group>da_nml</group>
+    <desc>
+      Activate nudging of ice 
+    </desc>
+    <values>
+      <value>.false.</value>
+    </values>
+  </entry>
+
+<!--  
+  <entry id="da_sic">
+    <type>logical</type>
+    <category>dataassimilation</category>
+    <group>da_nml</group>
+    <desc>
+      Nudginig of ice concentration
+    </desc>
+    <values>
+      <value>.false.</value>
+    </values>
+  </entry>
+-->
+<!--  
+  <entry id="da_sit">
+    <type>logical</type>
+    <category>dataassimilation</category>
+    <group>da_nml</group>
+    <desc>
+      Nudginig of sea ice thickness
+    </desc>
+    <values>
+      <value>.false.</value>
+    </values>
+  </entry>
+-->
+<!--  
+  <entry id="da_sno">
+    <type>logical</type>
+    <category>dataassimilation</category>
+    <group>da_nml</group>
+    <desc>
+      Nudginig of snow thickness
+    </desc>
+    <values>
+      <value>.false.</value>
+    </values>
+  </entry>
+-->
+  <entry id="da_update_ocn_mass">
+    <type>logical</type>
+    <category>dataassimilation</category>
+    <group>da_nml</group>
+    <desc>
+      Send water and salt fluxes from sea ice nudging to ocean model
+    </desc>
+    <values>
+      <value>.true.</value>
+    </values>
+  </entry>
+
+    <entry id="da_update_ocn_heat">
+    <type>logical</type>
+    <category>dataassimilation</category>
+    <group>da_nml</group>
+    <desc>
+      Send heat fluxes implied from sea ice nudging to ocean model
+    </desc>
+    <values>
+      <value>.false.</value>
+    </values>
+  </entry>
+
+  
+  <entry id="da_method">
+    <type>char</type>
+    <category>dataassimilation</category>
+    <group>da_nml</group>
+    <desc>
+      Data assimilation method (coin,pamip_short,pamip_long)
+    </desc>
+    <values>
+      <value>pamip_short</value>
+    </values>
+  </entry>
+
+  <entry id="da_data_dir">
+    <type>char</type>
+    <category>dataassimilation</category>
+    <group>da_nml</group>
+    <desc>
+      Path to inputfiles for data assimilation 
+    </desc>
+    <values>
+      <value>.</value>
+    </values>
+  </entry>
+
+
+  <entry id="da_stream_fldvarname">
+    <type>char</type>
+    <category>dataassimilation</category>
+    <group>da_nml</group>
+    <desc>
+      sea ice variable name of sic dataset
+    </desc>
+    <values>
+      <value>siconc</value>
+    </values>
+  </entry>
+
+    <entry id="da_stream_fldfilename">
+    <type>char</type>
+    <category>da_nml</category>
+    <group>da_nml</group>
+    <desc>
+      file name containing sst/sic data
+    </desc>
+    <values>
+      <value>''</value>
+    </values>
+  </entry>
+
+  <entry id="da_stream_domtvarname">
+    <type>char</type>
+    <category>dataassimilation</category>
+    <group>da_nml</group>
+    <desc>
+      domain file: time-dim var name
+    </desc>
+    <values>
+      <value>'time'</value>
+    </values>
+  </entry>
+
+  <entry id="da_stream_domxvarname">
+    <type>char</type>
+    <category>dataassimilation</category>
+    <group>da_nml</group>
+    <desc>
+      domain file: x-dim var name
+    </desc>
+    <values>
+      <value>x</value>
+    </values>
+  </entry>
+
+  <entry id="da_stream_domyvarname">
+    <type>char</type>
+    <category>dataassimilation</category>
+    <group>da_nml</group>
+    <desc>
+      domain file: y-dim varname
+    </desc>
+    <values>
+      <value>y</value>
+    </values>
+  </entry>
+
+  <entry id="da_stream_domareaname">
+    <type>char</type>
+    <category>dataassimilation</category>
+    <group>da_nml</group>
+    <desc>
+      domain file: area varname
+    </desc>
+    <values>
+      <value>area</value>
+    </values>
+  </entry>
+
+  <entry id="da_stream_dommaskname">
+    <type>char</type>
+    <category>dataassimilation</category>
+    <group>da_nml</group>
+    <desc>
+      domain file: mask varname
+    </desc>
+    <values>
+      <value>mask</value>
+    </values>
+  </entry>
+
+  <entry id="da_stream_domfilename">
+    <type>char</type>
+    <category>dataassimilation</category>
+    <group>da_nml</group>
+    <desc>
+      domain file name
+    </desc>
+    <values>
+      <value>''</value>
+    </values>
+  </entry>
+
+  <entry id="da_stream_mapread">
+    <type>char</type>
+    <category>dataassimilation</category>
+    <group>da_nml</group>
+    <desc>
+      Map file to read to map stream data to domain data
+    </desc>
+    <values>
+      <value>NOT_SET</value>
+    </values>
+  </entry>
+
+
+  <entry id="da_stream_year_first">
+    <type>integer</type>
+    <category>dataassimilation</category>
+    <group>da_nml</group>
+    <desc>
+      first year in stream to use
+    </desc>
+    <values>
+      <value>-999</value>
+    </values>
+  </entry>
+
+<entry id="da_stream_year_last">
+    <type>integer</type>
+    <category>dataassimilation</category>
+    <group>da_nml</group>
+    <desc>
+      Last year in stream to use
+    </desc>
+    <values>
+      <value>-999</value>
+    </values>
+  </entry>
+
+<entry id="da_model_year_align">
+    <type>integer</type>
+    <category>dataassimilation</category>
+    <group>da_nml</group>
+    <desc>
+      Align stream_year_first with this model year
+    </desc>
+    <values>
+      <value>-999</value>
+    </values>
+  </entry>
+
+
+<!--  
+   <entry id="da_ice_fill">
+    <type>logical</type>
+    <category>dataassimilation</category>
+    <group>da_nml</group>
+    <desc>
+      true => da siconc data fill required
+    </desc>
+    <values>
+      <value>.false.</value>
+    </values>
+  </entry>
+-->
+
+  
+  <!-- =========================== -->
   <!-- zbgc_nml -->
   <!-- =========================== -->
 
