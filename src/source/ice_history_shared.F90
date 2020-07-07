@@ -302,6 +302,11 @@
            f_sirdgthick = 'x', &
            f_sistreave = 'x', &
            f_sistremax = 'x', &
+!jd ice_da start
+           f_da_fresh = 'x',  &
+           f_da_fsalt = 'x',  &
+           f_da_fheat = 'x',  &
+!jd ice_da stop
            f_aicen     = 'x', f_vicen      = 'x', &
            f_vsnon     = 'x',                     &
            f_fswsfcn   = 'x',                     &
@@ -457,6 +462,11 @@
            f_sirdgthick, &
            f_sistreave, &
            f_sistremax, &
+!jd ice_da start
+           f_da_fresh,  &
+           f_da_fsalt,  &
+           f_da_fheat,  &
+!jd ice_da stop
            f_aicen,     f_vicen    , &
            f_vsnon,                  &
            f_fswsfcn,                &
@@ -634,6 +644,11 @@
            n_iage       , n_FY         , &
            n_fsurf_ai   , &
            n_fcondtop_ai, n_fmeltt_ai  , &
+!jd ice_da start
+           n_da_fresh,  &
+           n_da_fsalt,  &
+           n_da_fheat,  &
+!jd ice_da stop
            n_aicen      , n_vicen      , &
            n_fsurfn_ai   , &
            n_fcondtopn_ai, &

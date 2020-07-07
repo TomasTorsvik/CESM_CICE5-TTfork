@@ -60,6 +60,9 @@ module ice_comp_mct
                               release_all_fileunits
   use ice_therm_shared, only: ktherm
   use ice_prescribed_mod
+!jd
+  use ice_da,           only: ice_da_init_streams
+!jd
   use ice_step_mod
   use ice_global_reductions
   use ice_broadcast
@@ -409,6 +412,13 @@ contains
        call ice_prescribed_init(ICEID, gsmap_ice, dom_i)
     endif
 
+    !jd Nudging
+    if (other_cplgrid) then
+       call ice_da_init_streams(ICEID, gsmap_iloc, dom_iloc)
+    else
+       call ice_da_init_streams(ICEID, gsmap_ice, dom_i)
+    endif
+    !jd 
     !---------------------------------------------------------------------------
     ! Fill in export state for driver
     !---------------------------------------------------------------------------

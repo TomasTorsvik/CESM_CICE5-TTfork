@@ -71,6 +71,7 @@
       use ice_itd, only: init_itd
       use ice_kinds_mod
       use ice_restoring, only: ice_HaloRestore_init
+      use ice_da, only: da_ice, ice_da_init
       use ice_shortwave, only: init_shortwave
       use ice_state, only: tr_aero
       use ice_therm_vertical, only: init_thermo_vertical
@@ -117,6 +118,7 @@
 
       call init_forcing_ocn(dt) ! initialize sss and sst from data
       call init_state           ! initialize the ice state
+      if (da_ice) call ice_da_init  ! define data assimilation variables
       call init_transport       ! initialize horizontal transport
       call ice_HaloRestore_init ! restored boundary conditions
 

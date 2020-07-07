@@ -128,6 +128,7 @@
       use ice_restoring, only: restore_ice, ice_HaloRestore
       use ice_state, only: nt_qsno, trcrn, tr_iage, tr_FY, tr_lvl, &
           tr_pond_cesm, tr_pond_lvl, tr_pond_topo, tr_brine, tr_aero
+      use ice_da, only: da_ice, ice_da_update, ice_da_prep
       use ice_step_mod, only: prep_radiation, step_therm1, step_therm2, &
           post_thermo, step_dynamics, step_radiation
       use ice_therm_shared, only: calc_Tsfc
@@ -149,6 +150,12 @@
       !-----------------------------------------------------------------
 
          if (restore_ice) call ice_HaloRestore
+
+      !-----------------------------------------------------------------
+      ! assimilate observations prepare increment
+      !-----------------------------------------------------------------
+ 
+         if (da_ice) call ice_da_prep(idate, sec)
 
       !-----------------------------------------------------------------
       ! initialize diagnostics
@@ -196,6 +203,12 @@
          call ice_timer_stop(timer_thermo) ! thermodynamics
          call ice_timer_stop(timer_column) ! column physics
 
+      !-----------------------------------------------------------------
+      ! assimilate observations update fields
+      !-----------------------------------------------------------------
+ 
+         if (da_ice) call ice_da_update
+         
       !-----------------------------------------------------------------
       ! dynamics, transport, ridging
       !-----------------------------------------------------------------

@@ -1720,6 +1720,7 @@
     </values>
   </entry>
 
+
 <!--  
   <entry id="da_sic">
     <type>logical</type>
@@ -2574,6 +2575,42 @@
     </values>
   </entry>
 
+<entry id="f_da_fresh">
+    <type>char</type>
+    <category>history</category>
+    <group>icefields_nml</group>
+    <desc>
+      Write fresh water flux due to nudging
+    </desc>
+    <values>
+      <value>mxxxx</value>
+    </values>
+  </entry>
+    <entry id="f_da_fsalt">
+    <type>char</type>
+    <category>history</category>
+    <group>icefields_nml</group>
+    <desc>
+      Write salt flux to ocean due to nudging
+    </desc>
+    <values>
+      <value>mxxxx</value>
+    </values>
+    </entry>
+    
+    <entry id="f_da_fheat">
+    <type>char</type>
+    <category>history</category>
+    <group>icefields_nml</group>
+    <desc>
+      Write heat flux into sea ice due to nudging
+    </desc>
+    <values>
+      <value>mxxxx</value>
+    </values>
+  </entry>
+
+  
   <entry id="f_hi">
     <type>char</type>
     <category>history</category>

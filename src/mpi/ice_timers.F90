@@ -61,6 +61,9 @@
       timer_sndrcv,           &! time between send to receive
 #endif
       timer_bound,            &! boundary updates
+!jd-start
+      timer_da,               &! Ice nudging
+!jd-end      
       timer_bgc                ! biogeochemistry
 !      timer_tmp               ! for temporary timings
 
@@ -175,6 +178,7 @@
    call get_ice_timer(timer_diags,    'Diags    ',nblocks,distrb_info%nprocs)
    call get_ice_timer(timer_hist,     'History  ',nblocks,distrb_info%nprocs)
    call get_ice_timer(timer_bound,    'Bound',    nblocks,distrb_info%nprocs)
+   call get_ice_timer(timer_da,       'Nudging',  nblocks,distrb_info%nprocs)
    call get_ice_timer(timer_bgc,      'BGC',      nblocks,distrb_info%nprocs)
 #if (defined CESMCOUPLED)
    call get_ice_timer(timer_cplrecv,  'Cpl-recv', nblocks,distrb_info%nprocs)

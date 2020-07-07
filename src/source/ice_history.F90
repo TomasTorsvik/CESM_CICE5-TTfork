@@ -76,6 +76,7 @@
       use ice_restart_shared, only: restart
       use ice_state, only: tr_iage, tr_FY, tr_lvl, tr_pond, tr_aero, tr_brine
       use ice_zbgc_shared, only: skl_bgc
+      use ice_da, only: da_ice
 
       real (kind=dbl_kind), intent(in) :: &
          dt      ! time step
@@ -302,6 +303,14 @@
          f_sispeed = f_CMIP
       endif
 
+!jd ice_da start
+!      if (.not.da_ice) then ! called before initialization of da_ice? 
+!         f_da_fresh='x'
+!         f_da_fsalt='x'
+!         f_da_fheat='x'
+!      endif
+!jd ice_da stop
+      
 #ifndef ncdf
       f_bounds = .false.
 #endif
@@ -525,6 +534,11 @@
 
 !      call broadcast_scalar (f_field3dz, master_task)
       call broadcast_scalar (f_keffn_top, master_task)
+!jd ice_da start
+      call broadcast_scalar (f_da_fresh, master_task)
+      call broadcast_scalar (f_da_fsalt, master_task)
+      call broadcast_scalar (f_da_fheat, master_task)
+!jd ice_da stop
       call broadcast_scalar (f_Tinz, master_task)
       call broadcast_scalar (f_Sinz, master_task)
       call broadcast_scalar (f_Tsnz, master_task)
@@ -1487,6 +1501,26 @@
              "sistremax is instantaneous", c1, c0,                  &
              ns1, f_sistremax)
       
+!jd ice_da start
+      
+         call define_hist_field(n_da_fresh,"da_fresh","kg/m2/s",tstr2D, tcstr, &
+              "Freshwater flux flux to ocean implied by nudgning",   &
+              "Positive into the ocean",  &
+             c1, c0,                   &
+             ns1, f_da_fresh)
+
+
+         call define_hist_field(n_da_fsalt,"da_fsalt","kg/m/s",tstr2D, tcstr, &
+              "Salt flux flux to ocean implied by ice nudgning", &
+              "if positive, ocean gains salt", c1,c0,     &
+              ns1,f_da_fsalt)
+
+         call define_hist_field(n_da_fheat,"da_fheat","W/m2",tstr2D, tcstr, &
+             "implied heat flux loss in ice due to nudging",               &
+             "negative when ice increase", c1, c0,                 &
+             ns1, f_da_fheat)
+!jd ice_da stop
+
       
       endif ! if (histfreq(ns1) /= 'x') then
       enddo ! ns1
@@ -1564,6 +1598,7 @@
               "multilayer scheme", c1, c0,      &           
               ns1, f_keffn_top)
 
+           
            ! CMIP 3D fields
            call define_hist_field(n_siitdconc,"siitdconc","1",tstr3Dc, tcstr, & 
               "ice area, categories","none", c1, c0,                  &            
@@ -1819,7 +1854,10 @@
       use ice_therm_mushy, only: temperature_mush, temperature_snow, density_brine, liquid_fraction
       use ice_timers, only: ice_timer_start, ice_timer_stop, timer_readwrite
       use ice_zbgc_shared, only: skl_bgc
-
+!jd ice_da start
+      use ice_da, only: da_ice, da_fresh, da_fsalt, da_fheat,aice_inc,vice_inc
+!jd ice_da stop
+      
       real (kind=dbl_kind), intent(in) :: &
          dt      ! time step
 
@@ -2158,6 +2196,18 @@
          if (f_strength(1:1)/= 'x') &
              call accum_hist_field(n_strength,iblk, strength(:,:,iblk), a2D)
 
+!jd ice_da start
+         if (da_ice) then    ! da_fresh etc not allocated if da_ice==F
+            if (f_da_fresh(1:1)/= 'x') &
+                 call accum_hist_field(n_da_fresh,iblk,da_fresh(:,:,iblk),a2D)
+            if (f_da_fsalt(1:1)/= 'x') &
+                 call accum_hist_field(n_da_fsalt,iblk,da_fsalt(:,:,iblk),a2D)
+            if (f_da_fheat(1:1)/= 'x') &
+                 call accum_hist_field(n_da_fheat,iblk,da_fheat(:,:,iblk),a2D)
+         endif
+!jd ice_da stop
+
+         
 ! The following fields (divu, shear, sig1, and sig2) will be smeared
 !  if averaged over more than a few days.
 ! Snapshots may be more useful (see below).
