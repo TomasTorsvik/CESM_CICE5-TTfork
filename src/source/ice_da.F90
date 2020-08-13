@@ -16,7 +16,7 @@ module ice_da
 
 ! !USES:  
   use ice_kinds_mod
-  use ice_constants, only: c0, c1, p1, p01, c10, secday, puny, &
+  use ice_constants, only: c0, c1, p1, p2, p01, p05, c10, secday, puny, &
        field_loc_center, field_type_scalar
   use ice_blocks, only: nx_block, ny_block
   use ice_domain_size, only: max_blocks, max_ntrcr
@@ -84,7 +84,6 @@ module ice_da
        thsnow_obs_err ,  & ! observed snow thickness std (m)
        thsnow_inc          ! Snow thickness increment
 
-!jd      real (kind=dbl_kind), dimension (:,:,:,:), allocatable :: &
 !jd         trcr_obs, trcr_err, trcr_inc     ! tracers
 
 
@@ -96,8 +95,8 @@ module ice_da
                      ! mass increase
 
 
-  real (kind=dbl_kind), parameter :: min_aice_obs = 0.05
-  real (kind=dbl_kind), parameter :: max_aice_obs = 1.00
+  real (kind=dbl_kind), parameter :: min_aice_obs = p05
+  real (kind=dbl_kind), parameter :: max_aice_obs = c1
 
   
       !jd For data stream
@@ -168,6 +167,7 @@ contains
        aice_inc = c0
        vice_inc = c0
        vsno_inc = c0
+       ! we only assimilate at the ice edge?
        where( tmask .and. (TLAT >= 80. .or. TLAT <= -70 ))
           aice_obs = 0.99*c1
           aice_obs_err=p01*p01
@@ -548,6 +548,7 @@ contains
 
          call da_pamip_update (nx_block, ny_block, &
               ilo, ihi, jlo, jhi,                  &
+              TLAT(:,:,  iblk),      &
               tmask(:,:,  iblk),     &
               sss(:,:,iblk),         &
               Tf(:,:,iblk),          &
@@ -783,6 +784,7 @@ end subroutine da_pamip_prep
 
 subroutine da_pamip_update (nx_block,ny_block,   &
                           ilo, ihi,  jlo, jhi,   &
+                          TLAT,                  &
                           tmask,     sss,        &
                           Tf,        salinz,     &
                           aice,                  &
@@ -792,9 +794,13 @@ subroutine da_pamip_update (nx_block,ny_block,   &
                           aicen,     vicen,     vsnon,    &
                           trcrn,     ntrcr)         
 
-  use ice_constants, only: rhoi, rhos, p001, ice_ref_salinity
-  use ice_state, only: nt_qice, nt_qsno
+  use ice_constants, only: rhoi, rhos, p001, ice_ref_salinity,&
+                           c2,c5
+  use ice_state, only: nt_qice, nt_qsno, nt_aero, tr_aero
   
+  use ice_domain_size, only: n_aero
+!  use ice_grid, only:  TLAT
+    
   integer (kind=int_kind), intent(in) :: &
        nx_block, ny_block, & ! block dimensions
        ilo, ihi          , & ! physical domain indices
@@ -803,15 +809,16 @@ subroutine da_pamip_update (nx_block,ny_block,   &
 
   logical (kind=log_kind), dimension (nx_block,ny_block), &
        intent(in) :: &
-       tmask                 ! true for ice/ocean cells
+       tmask                ! true for ice/ocean cells
 
   real (kind=dbl_kind), dimension (nx_block,ny_block), &
        intent(in) :: &
        Tf,           & ! freezing temperature (C)
        sss,          & ! sea surface salinity (ppt)
-       aice,               & ! model aggregate sic
-       inc_aice,             & ! increment in aggregated ice concentration
-       inc_thice               ! incrmement in mean sea ice thickness
+       aice,         & ! model aggregate sic
+       inc_aice,     & ! increment in aggregated ice concentration
+       inc_thice,    & ! incrmement in mean sea ice thickness
+       TLAT
 
   real (kind=dbl_kind),dimension(nx_block,ny_block,nilyr+1),&
        intent(in) :: &
@@ -859,42 +866,66 @@ subroutine da_pamip_update (nx_block,ny_block,   &
        vsno0,    &
        radd            ! incremental ratio
 
+real (kind=dbl_kind), dimension(ncat) :: &
+       radn_aero, &      ! Increment used for aerosols in each cathegory
+       radn              ! Increment used in each cathegory
+
   
   !-----------------------------------------------------------------
   ! assimilate sic on grid
   !-----------------------------------------------------------------
-
+  
   if (da_sic == .true.) then
      do j = jlo,jhi
         do i = ilo,ihi
+!jd           if ((tmask(i,j)).and.(TLAT(i,j)>c0)) then
            if (tmask(i,j)) then
               da_fresh(i,j) = c0
               da_fsalt(i,j) = c0
               da_fheat(i,j) = c0
               
               !jd              if (aice(i,j) > puny) then
-              if (aice(i,j) > c0) then              
-                 radd = min(max(c0,c1 + inc_aice(i,j)/max(aice(i,j),puny)),c10)
-                 do n=1, ncat
-                    aicen(i,j,n) = aicen(i,j,n) * radd
-                    vice0 = vicen(i,j,n)
-                    vicen(i,j,n) = vicen(i,j,n) * radd
-                    vsno0 = vsnon(i,j,n)
-                    vsnon(i,j,n) = vsnon(i,j,n) * radd
+              if (aice(i,j) > c0) then
 
+! Calculate increments for each category
+! Limit ice growth factor to maximum 10.m.  ( 0 <= radd <= 10 )
+                 radd = min(max(c0,c1 + inc_aice(i,j)/max(aice(i,j),puny)),c10)
+                 radn(:)=radd
+                 radn_aero(:)=c1
+                 !remove ice in all categories
+                 !but only increase it in relatively
+                 !thin categories (below 10 m thickness)
+                 if (radd>c1) then
+                    do n=1, ncat
+                       if ((vicen(i,j,n)/aicen(i,j,n))>c10) radn(n)=c1
+                    enddo ! ncat
+!jd !Reduce aerosol consentration when only small amount of ice exists before artificially increasing the ice concentration. 
+                    if (aice(i,j) < p2) radn_aero(:)=c1/radn(:)
+                 endif
+
+! Update state
+                 do n=1, ncat
+                    vice0 = vicen(i,j,n)
+                    vsno0 = vsnon(i,j,n)
+                    aicen(i,j,n) = aicen(i,j,n) * radn(n)
+                    vicen(i,j,n) = vicen(i,j,n) * radn(n)
+                    vsnon(i,j,n) = vsnon(i,j,n) * radn(n)
+                    if (tr_aero) then
+                          trcrn(i,j,nt_aero:nt_aero+4*n_aero-1,n)=&
+                          trcrn(i,j,nt_aero:nt_aero+4*n_aero-1,n)*radn_aero(n)
+                    end if
+                    !
                     dvice = vicen(i,j,n) - vice0
                     dvsno = vsnon(i,j,n) - vsno0
-
                     ! From ice
                     dfresh = -dvice*rhoi/dt
                     dfsalt = ice_ref_salinity*p001*dfresh
-
                     ! From snow, no salt
                     dfresh = dfresh - dvsno*rhos/dt
-
+                    !
                     da_fresh(i,j) = da_fresh(i,j) + dfresh
                     da_fsalt(i,j) = da_fsalt(i,j) + dfsalt
-                    
+                    !
                     do k = 1, nilyr
                        ! enthalpy tracers do not change (e/v constant)
                        ! heat flux loss from ice increase
