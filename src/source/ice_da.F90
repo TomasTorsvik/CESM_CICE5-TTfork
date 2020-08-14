@@ -368,6 +368,20 @@ contains
       fillalgo='none'
    endif
 
+   ! Set da_method spesific da_timescale when negative or zero values are read from namelist
+   ! Positive values are kept from namelist.
+   if (da_timescale < puny) then
+        if (trim(da_method)=='pamip_short') then
+           da_timescale = c1
+        else if (trim(da_method)=='pamip_long') then
+           da_timescale = 60.
+        else 
+           da_timescale = 5.
+        end if
+     end if
+
+
+
    if (my_task == master_task) then
       write(nu_diag,*) ' '
       write(nu_diag,*) '  This is the ice_da optons.'
