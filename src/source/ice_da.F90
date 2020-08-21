@@ -16,7 +16,7 @@ module ice_da
 
 ! !USES:  
   use ice_kinds_mod
-  use ice_constants, only: c0, c1, p1, p2, p01, p05, c10, secday, puny, &
+  use ice_constants, only: c0, c1, p1, p2, p01, p05, p15, c10, secday, puny, &
        field_loc_center, field_type_scalar
   use ice_blocks, only: nx_block, ny_block
   use ice_domain_size, only: max_blocks, max_ntrcr
@@ -99,7 +99,7 @@ module ice_da
        da_mask   ! Mask used to limit the assimilation region
 
 
-  real (kind=dbl_kind), parameter :: min_aice_obs = p05
+  real (kind=dbl_kind), parameter :: min_aice_obs = p15
   real (kind=dbl_kind), parameter :: max_aice_obs = c1
 
 
@@ -374,9 +374,9 @@ contains
         if (trim(da_method)=='pamip_short') then
            da_timescale = c1
         else if (trim(da_method)=='pamip_long') then
-           da_timescale = 60.
+           da_timescale = 60.0_dbl_kind
         else 
-           da_timescale = 5.
+           da_timescale = 5.0_dbl_kind
         end if
      end if
 
@@ -590,6 +590,7 @@ contains
               Tf(:,:,iblk),          &
               salinz(:,:,:,iblk),    &
               aice(:,:,  iblk),      &
+              vice(:,:,iblk),        &
               aice_inc(:,:,iblk),    &
               thice_inc(:,:,iblk),   &
               vice_inc(:,:,iblk),    &
@@ -730,6 +731,7 @@ contains
                           ilo, ihi,            jlo, jhi,      &
                           da_mask(:,:,    iblk),                &
                           aice(:,:,     iblk),                &
+                          vice(:,:,     iblk),                &
                           aice_obs(:,:, iblk),                &
                           thice_obs(:,:, iblk),               &
                           aice_inc(:,:, iblk),                &
@@ -750,6 +752,7 @@ contains
  subroutine da_pamip_prep (nx_block,            ny_block,      &
                           ilo, ihi,            jlo, jhi,      &
                           damask,               aice,          &
+                          vice,                                &
                           o_aice,              o_thice,  &
                           inc_aice,            inc_thice )
 
@@ -767,6 +770,7 @@ contains
   real (kind=dbl_kind), dimension (nx_block,ny_block), &
        intent(in) :: &
        aice,               & ! model aggregate sic
+       vice,               & ! model aggregated ice volume
        o_aice,             & ! observed aggregate sic
        o_thice               ! observed ice thickness
          
@@ -787,6 +791,8 @@ contains
 !del       indxi, indxj    ! compressed indices for cells with restoring
 
   real (kind=dbl_kind) :: &
+       thi,          & ! model ice thickness
+       othi,         & ! observed ice thickness
        obs_ai,       & ! local version of thickness used
        rda,          & ! dt/dT, where dT is observation time step
        radd            ! incremental ratio
@@ -795,10 +801,9 @@ contains
   ! Calculate increment in ice concentration and thickness
   !-----------------------------------------------------------------
 
-  rda = dt / (da_timescale*real(secday,kind=dbl_kind))
+  rda = max(c0,min( dt / (da_timescale*real(secday,kind=dbl_kind)),c1))
 
   if (da_sic == .true.) then
-
      do j = jlo,jhi
         do i = ilo,ihi
            if (damask(i,j) ) then
@@ -807,6 +812,24 @@ contains
               inc_aice(i,j)=rda*(obs_ai - aice(i,j))
            else
               inc_aice(i,j)=c0
+              
+           endif
+           
+        enddo
+     enddo
+  endif
+
+  if (da_sit == .true.) then
+     do j = jlo,jhi
+        do i = ilo,ihi
+           if (damask(i,j) ) then
+              thi = vice(i,j)/max(aice(i,j),puny)
+              othi=o_thice(i,j)
+              if (o_aice(i,j) < min_aice_obs) &
+                   othi=c0
+              inc_thice(i,j)=rda*(o_thice(i,j) - thi)
+           else
+              inc_thice(i,j)=c0
               
            endif
            
@@ -822,6 +845,7 @@ subroutine da_pamip_update (nx_block,ny_block,   &
                           damask,     sss,        &
                           Tf,        salinz,     &
                           aice,                  &
+                          vice,                  &
                           inc_aice,  inc_thice,  &
                           inc_vice,  inc_vsno,   &
                           da_fresh,  da_fsalt,  da_fheat, &
@@ -849,7 +873,8 @@ subroutine da_pamip_update (nx_block,ny_block,   &
        intent(in) :: &
        Tf,           & ! freezing temperature (C)
        sss,          & ! sea surface salinity (ppt)
-       aice,         & ! model aggregate sic
+       aice,         & ! model aggregate ice area fraction
+       vice,         & ! model aggregate ice volume
        inc_aice,     & ! increment in aggregated ice concentration
        inc_thice       ! incrmement in mean sea ice thickness
 
@@ -897,18 +922,20 @@ subroutine da_pamip_update (nx_block,ny_block,   &
        dfheat,    &
        vice0,    &
        vsno0,    &
-       radd            ! incremental ratio
+       radd,     &       ! incremental ratio
+       radhi            ! Thickness increment ration
 
 real (kind=dbl_kind), dimension(ncat) :: &
-       radn_aero, &      ! Increment used for aerosols in each cathegory
-       radn              ! Increment used in each cathegory
+     radn_aero, &      ! Increment used for aerosols in each category
+     radn,      &      ! Area increment used in each category
+     radhin            ! Thickness increment used in each category
 
   
   !-----------------------------------------------------------------
   ! assimilate sic on grid
   !-----------------------------------------------------------------
   
-  if (da_sic == .true.) then
+  if (da_sic) then
      do j = jlo,jhi
         do i = ilo,ihi
            if (damask(i,j)) then
@@ -921,9 +948,10 @@ real (kind=dbl_kind), dimension(ncat) :: &
 
 ! Calculate increments for each category
 ! Limit ice growth factor to maximum 10.m.  ( 0 <= radd <= 10 )
-                 radd = min(max(c0,c1 + inc_aice(i,j)/max(aice(i,j),puny)),c10)
+                 radd = min(max(c0,c1 + inc_aice(i,j)/max(aice(i,j),puny)), c2)
                  radn(:)=radd
                  radn_aero(:)=c1
+                 radhin(:) = c1
                  !remove ice in all categories
                  !but only increase it in relatively
                  !thin categories (below 10 m thickness)
@@ -935,12 +963,17 @@ real (kind=dbl_kind), dimension(ncat) :: &
                     if (aice(i,j) < p2) radn_aero(:)=c1/radn(:)
                  endif
 
+                 if (da_sit) then
+                    radhi = min(max(c0,c1 + inc_thice(i,j)*aice(i,j)/max(vice(i,j),puny)), c2)
+                    radhin(1:ncat) = radhi
+                 end if
+
 ! Update state
                  do n=1, ncat
                     vice0 = vicen(i,j,n)
                     vsno0 = vsnon(i,j,n)
                     aicen(i,j,n) = aicen(i,j,n) * radn(n)
-                    vicen(i,j,n) = vicen(i,j,n) * radn(n)
+                    vicen(i,j,n) = vicen(i,j,n) * radn(n) * radhin(n)
                     vsnon(i,j,n) = vsnon(i,j,n) * radn(n)
                     if (tr_aero) then
                           trcrn(i,j,nt_aero:nt_aero+4*n_aero-1,n)=&

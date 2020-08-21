@@ -881,6 +881,9 @@
       use ice_therm_vertical, only: phi_init, dSin0_frazil
       use ice_timers, only: ice_timer_start, ice_timer_stop, timer_catconv
       use ice_zbgc_shared, only: first_ice
+!jd pamip-short
+      use ice_da, only: thice_obs
+!jd
 
       real (kind=dbl_kind), intent(in) :: &
          dt      ! time step
@@ -1019,6 +1022,9 @@
                            vicen     (:,:,:,iblk),          &
                            aice0     (:,:,  iblk),          &
                            aice      (:,:,  iblk),          &
+!jd pamip-short
+                           thice_obs (:,:,  iblk),          &
+!jd 
                            frzmlt    (:,:,  iblk),          &
                            frazil    (:,:,  iblk),          &
                            frazil_diag(:,:,  iblk),         &
