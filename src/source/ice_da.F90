@@ -99,13 +99,13 @@ module ice_da
        da_mask   ! Mask used to limit the assimilation region
 
 
-  real (kind=dbl_kind), parameter :: min_aice_obs = p15
+  real (kind=dbl_kind), parameter :: min_aice_obs = p1
   real (kind=dbl_kind), parameter :: max_aice_obs = c1
 
 
   real (kind=dbl_kind) :: &
-       da_lat_min = -90.0,      & ! Southern limit of da-region
-       da_lat_max = 90.0          ! Northern limit of da-region
+       da_lat_min = -90.0_dbl_kind,   & ! Southern limit of da-region
+       da_lat_max = 90.0_dbl_kind       ! Northern limit of da-region
 
   
       !jd For data stream
@@ -180,9 +180,9 @@ contains
        aice_inc = c0
        vice_inc = c0
        vsno_inc = c0
-       ! we only assimilate at the ice edge?
-       where( tmask .and. (TLAT >= 80. .or. TLAT <= -70 ))
-          aice_obs = 0.99*c1
+       ! Syntetic initial conditions. Owerritten by data from input-file
+       where( tmask .and. (TLAT >= 80.0_dbl_kind .or. TLAT <= -70.0_dbl_kind ))
+          aice_obs = 0.99_dbl_kind
           aice_obs_err=p01*p01
        endwhere
        allocate(da_fresh(nx_block,ny_block,max_blocks), &
@@ -444,12 +444,9 @@ contains
    call ice_da_init
    
    if (trim(da_method)=='pamip_short') then
-      if (my_task == master_task) then
-         write(nu_diag,*) &
+      if (my_task == master_task) write(nu_diag,*) &
               subName, ':: DA PAMIP SHORT :: Ice thickness NH : 2.0 m , SH, 1.0 m '
-!jd         write(nu_diag,*) &
-!jd              'da_ice_init_streams :: DA PAMIP SHORT :: Sets aice = 0.99 north of 80N and South of 70 S'
-      end if
+
       where ((TLAT >= c0))
          thice_obs = c2
          thice_obs_err = p01
@@ -803,7 +800,7 @@ contains
 
   rda = max(c0,min( dt / (da_timescale*real(secday,kind=dbl_kind)),c1))
 
-  if (da_sic == .true.) then
+  if (da_sic) then
      do j = jlo,jhi
         do i = ilo,ihi
            if (damask(i,j) ) then
@@ -819,15 +816,15 @@ contains
      enddo
   endif
 
-  if (da_sit == .true.) then
+  if (da_sit) then
      do j = jlo,jhi
         do i = ilo,ihi
            if (damask(i,j) ) then
               thi = vice(i,j)/max(aice(i,j),puny)
               othi=o_thice(i,j)
               if (o_aice(i,j) < min_aice_obs) &
-                   othi=c0
-              inc_thice(i,j)=rda*(o_thice(i,j) - thi)
+                   othi = c0
+              inc_thice(i,j)=rda*(othi - thi)
            else
               inc_thice(i,j)=c0
               
@@ -947,7 +944,8 @@ real (kind=dbl_kind), dimension(ncat) :: &
               if (aice(i,j) > c0) then
 
 ! Calculate increments for each category
-! Limit ice growth factor to maximum 10.m.  ( 0 <= radd <= 10 )
+! Limit ice growth factor to maximum 2.  ( 0 <= radd <= 2 ).
+! Thus, maximum a doubling of ice area per time step
                  radd = min(max(c0,c1 + inc_aice(i,j)/max(aice(i,j),puny)), c2)
                  radn(:)=radd
                  radn_aero(:)=c1
