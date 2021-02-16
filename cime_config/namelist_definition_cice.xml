@@ -384,6 +384,7 @@
       <value hgrid="tnx0.25v1">bin</value>
       <value hgrid="tnx0.25v3">bin</value>
       <value hgrid="tnx0.25v4">bin</value>
+      <value hgrid="tnx0.125v4">bin</value>
     </values>
   </entry>
 
@@ -410,6 +411,7 @@
       <value hgrid="tnx0.25v1">tripole</value>
       <value hgrid="tnx0.25v3">tripole</value>
       <value hgrid="tnx0.25v4">tripole</value> 
+      <value hgrid="tnx0.125v4">tripole</value>
     </values>
   </entry>
 
@@ -435,6 +437,7 @@
       <value hgrid="tnx2v1">$DIN_LOC_ROOT/ocn/blom/grid/horiz_grid_tnx2v1_20130206.ieeer8</value>
       <value hgrid="tnx1v4">$DIN_LOC_ROOT/ocn/blom/grid/horiz_grid_tnx1v4_20170622.ieeer8</value> 
       <value hgrid="tnx0.25v4">$DIN_LOC_ROOT/ocn/blom/grid/horiz_grid_tnx0.25v4_20170622.ieeer8</value> 
+      <value hgrid="tnx0.125v4">$DIN_LOC_ROOT/ocn/blom/grid/horiz_grid_tnx0.125v4_20200722.ieeer8</value>
     </values>
   </entry>
 
@@ -460,6 +463,7 @@
       <value hgrid="tnx2v1">$DIN_LOC_ROOT/ocn/blom/grid/topography_tnx2v1_20130206.ieeei4</value>
       <value hgrid="tnx1v4">$DIN_LOC_ROOT/ocn/blom/grid/topography_tnx1v4_20170622.ieeei4</value>
       <value hgrid="tnx0.25v4">$DIN_LOC_ROOT/ocn/blom/grid/topography_tnx0.25v4_20170622.ieeei4</value> 
+      <value hgrid="tnx0.125v4">$DIN_LOC_ROOT/ocn/blom/grid/topography_tnx0.125v4_20200722.ieeei4</value>
     </values>
   </entry>
 
@@ -566,6 +570,7 @@
       <value hgrid ='tnx0.25v1'>tripole</value>
       <value hgrid ='tnx0.25v3'>tripole</value>
       <value hgrid ='tnx0.25v4'>tripole</value>
+      <value hgrid ='tnx0.125v4'>tripole</value>
     </values>
   </entry>
 
