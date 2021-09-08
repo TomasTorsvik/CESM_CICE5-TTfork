@@ -231,7 +231,11 @@
          fresh   , & ! fresh water flux to ocean (kg/m^2/s)
          fsalt   , & ! salt flux to ocean (kg/m^2/s)
          fhocn   , & ! net heat flux to ocean (W/m^2)
-         fswthru     ! shortwave penetrating to ocean (W/m^2)
+         fswthru , & ! shortwave penetrating to ocean (W/m^2)
+         fswthruvdr, & ! vis dir shortwave penetrating to ocean (W/m^2)
+         fswthruvdf, & ! vis dif shortwave penetrating to ocean (W/m^2)
+         fswthruidr, & ! nir dir shortwave penetrating to ocean (W/m^2)
+         fswthruidf    ! nir dif shortwave penetrating to ocean (W/m^2)
 
       logical (kind=log_kind), public :: &
          send_i2x_per_cat = .false. ! if true, pass select per ice thickness category fields to the coupler
@@ -530,6 +534,10 @@
       fsalt   (:,:,:) = c0
       fhocn   (:,:,:) = c0
       fswthru (:,:,:) = c0
+      fswthruvdr (:,:,:) = c0
+      fswthruvdf (:,:,:) = c0
+      fswthruidr (:,:,:) = c0
+      fswthruidf (:,:,:) = c0
       fresh_da(:,:,:) = c0    ! data assimilation
       fsalt_da(:,:,:) = c0
       flux_bio (:,:,:,:) = c0 ! bgc
@@ -606,6 +614,10 @@
       fsalt    (:,:,:)   = c0
       fhocn    (:,:,:)   = c0
       fswthru  (:,:,:)   = c0
+      fswthruvdr  (:,:,:)   = c0
+      fswthruvdf  (:,:,:)   = c0
+      fswthruidr  (:,:,:)   = c0
+      fswthruidf  (:,:,:)   = c0
       faero_ocn(:,:,:,:) = c0
       fiso_ocn (:,:,:,:) = c0
  
@@ -775,6 +787,8 @@
                                Tbotn,    Tsnicen,      &
                                freshn,   fsaltn,     &
                                fhocnn,   fswthrun,   &
+                               fswthrunvdr,   fswthrunvdf,   &
+                               fswthrunidr,   fswthrunidf,   &
                                strairxT, strairyT,   &  
                                Cd_atm,        &
                                fsurf,    fcondtop,   &
@@ -787,6 +801,8 @@
                                Tbot,     Tsnice,       &
                                fresh,    fsalt,      & 
                                fhocn,    fswthru,    &
+                               fswthruvdr, fswthruvdf, &
+                               fswthruidr, fswthruidf, &
                                melttn, meltsn, meltbn, congeln, snoicen, &
                                meltt,  melts,        &
                                meltb,                &
@@ -835,6 +851,10 @@
           fsaltn  , & ! salt flux to ocean              (kg/m2/s)
           fhocnn  , & ! actual ocn/ice heat flx         (W/m**2)
           fswthrun, & ! sw radiation through ice bot    (W/m**2)
+          fswthrunvdr, & ! sw radiation through ice bot    (W/m**2)
+          fswthrunvdf, & ! sw radiation through ice bot    (W/m**2)
+          fswthrunidr, & ! sw radiation through ice bot    (W/m**2)
+          fswthrunidf, & ! sw radiation through ice bot    (W/m**2)
           melttn  , & ! top ice melt                    (m)
           meltbn  , & ! bottom ice melt                 (m)
           meltsn  , & ! snow melt                       (m)
@@ -877,6 +897,10 @@
           fsalt   , & ! salt flux to ocean              (kg/m2/s)
           fhocn   , & ! actual ocn/ice heat flx         (W/m**2)
           fswthru , & ! sw radiation through ice bot    (W/m**2)
+          fswthruvdr , & ! sw vis dir radiation through ice bot    (W/m**2)
+          fswthruvdf , & ! sw vis dif radiation through ice bot    (W/m**2)
+          fswthruidr , & ! sw vis dir radiation through ice bot    (W/m**2)
+          fswthruidf , & ! sw vis dif radiation through ice bot    (W/m**2)
           meltt   , & ! top ice melt                    (m)
           meltb   , & ! bottom ice melt                 (m)
           melts   , & ! snow melt                       (m)
@@ -954,6 +978,10 @@
          fsalt    (i,j) = fsalt    (i,j) + fsaltn  (i,j)*aicen(i,j)
          fhocn    (i,j) = fhocn    (i,j) + fhocnn  (i,j)*aicen(i,j)
          fswthru  (i,j) = fswthru  (i,j) + fswthrun(i,j)*aicen(i,j)
+         fswthruvdr  (i,j) = fswthruvdr  (i,j) + fswthrunvdr(i,j)*aicen(i,j)
+         fswthruvdf  (i,j) = fswthruvdf  (i,j) + fswthrunvdf(i,j)*aicen(i,j)
+         fswthruidr  (i,j) = fswthruidr  (i,j) + fswthrunidr(i,j)*aicen(i,j)
+         fswthruidf  (i,j) = fswthruidf  (i,j) + fswthrunidf(i,j)*aicen(i,j)
 
          ! ice/snow thickness
 
@@ -988,6 +1016,8 @@
                                Tref,     Qref,     &
                                fresh,    fsalt,    &
                                fhocn,    fswthru,  &
+                               fswthruvdr,    fswthruvdf,  &
+                               fswthruidr,    fswthruidf,  &
                                faero_ocn,          &
                                alvdr,    alidr,    &
                                alvdf,    alidf,    &
@@ -1034,6 +1064,10 @@
           fsalt   , & ! salt flux to ocean              (kg/m2/s)
           fhocn   , & ! actual ocn/ice heat flx         (W/m**2)
           fswthru , & ! sw radiation through ice bot    (W/m**2)
+          fswthruvdr , & ! sw radiation through ice bot    (W/m**2)
+          fswthruvdf , & ! sw radiation through ice bot    (W/m**2)
+          fswthruidr , & ! sw radiation through ice bot    (W/m**2)
+          fswthruidf , & ! sw radiation through ice bot    (W/m**2)
           alvdr   , & ! visible, direct   (fraction)
           alidr   , & ! near-ir, direct   (fraction)
           alvdf   , & ! visible, diffuse  (fraction)
@@ -1102,6 +1136,10 @@
             fsalt   (i,j) = fsalt   (i,j) * ar
             fhocn   (i,j) = fhocn   (i,j) * ar
             fswthru (i,j) = fswthru (i,j) * ar
+            fswthruvdr (i,j) = fswthruvdr (i,j) * ar
+            fswthruvdf (i,j) = fswthruvdf (i,j) * ar
+            fswthruidr (i,j) = fswthruidr (i,j) * ar
+            fswthruidf (i,j) = fswthruidf (i,j) * ar
             alvdr   (i,j) = alvdr   (i,j) * ar
             alidr   (i,j) = alidr   (i,j) * ar
             alvdf   (i,j) = alvdf   (i,j) * ar
@@ -1135,6 +1173,10 @@
             fsalt   (i,j) = c0
             fhocn   (i,j) = c0
             fswthru (i,j) = c0
+            fswthruvdr (i,j) = c0
+            fswthruvdf (i,j) = c0
+            fswthruidr (i,j) = c0
+            fswthruidf (i,j) = c0
             alvdr   (i,j) = c0  ! zero out albedo where ice is absent
             alidr   (i,j) = c0
             alvdf   (i,j) = c0 

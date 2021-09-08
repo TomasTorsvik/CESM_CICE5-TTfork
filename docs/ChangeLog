@@ -1,4 +1,54 @@
 ===============================================================
+cice5_20190322
+Originator: dbailey
+Date:  21  Mar 2019
+Version: 5.0
+One-line: Fix some SIMIP history fields.
+
+Fix sidmassevapsubl, sndmassubl, and sndmasssnf. These
+were mutiplied by rhos and shouldn't have been. These history
+fields will have different answers.
+
+        modified:   src/source/ice_history.F90
+
+===============================================================
+cice5_20190321
+Originator: dbailey
+Date:  21 Mar 2019
+Version: 5.0
+One-line: CIME updates from Jim.
+
+        modified:  cime_config/buildlib
+
+
+===============================================================
+cice5_20190318
+Originator: dbailey
+Date:  18 Mar 2019
+Version: 5.0
+One-line: New MOM grid from Alper.
+
+        modified:   cime_config/namelist_definition_cice.xml
+
+===============================================================
+cice5_20190204
+Originator: jedwards
+Date:  04 Feb 2019
+Version: 5.0
+One-line: Fix bug in setting DECOMPTYPE for pts_mode
+
+        modified: buildcpp, buildnml, buildlib
+
+===============================================================
+cice5_20190107
+Originator: jedwards
+Date:  07 Jan 2019
+Version: 5.0
+One-line: Fix setting of DECOMPTYPE
+
+        modified: buildcpp
+
+===============================================================
 cice5_20181109
 Originator: dbailey
 Date:  09 Nov 2018
@@ -59,7 +109,7 @@ Date:  13 Sep 2018
 Version: 5.0
 One-line: Fix hobart NAG and CMIP variable changes.
 
-I changed the nodes for the hobart tests to 4 so the 
+I changed the nodes for the hobart tests to 4 so the
 NAG compiler tests would pass.
 I also made some updates for CMIP variables. (BFB)
 
@@ -178,7 +228,7 @@ cice5_20180213
 Originator: dbailey
 Date: 13 Feb 2018
 Version: 5.0
-One-line: 
+One-line:
 
         modified:   cime_config/testdefs/testlist_cice.xml
 
