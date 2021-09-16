@@ -68,6 +68,11 @@
       use ice_calendar, only: yday, sec, calendar_type, nextsw_cday, days_per_year
       use ice_constants, only: c0, c2, p5, pi, secday
       use shr_orb_mod, only: shr_orb_decl
+!+tht
+#if defined CESMCOUPLED
+      use shr_orb_mod, only: shr_orb_cosz
+#endif
+!-tht
 
       integer (kind=int_kind), intent(in) :: &
          nx_block, ny_block, & ! block dimensions
@@ -118,9 +123,17 @@
 
          coszen(:,:) = c0  ! sun at horizon
 
-         !DIR$ CONCURRENT !Cray
-         !cdir nodep      !NEC
-         !ocl novrec      !Fujitsu
+!DIR$ CONCURRENT !Cray
+!cdir nodep      !NEC
+!ocl novrec      !Fujitsu
+!+tht
+#if defined CESMCOUPLED
+         do ij = 1, icells
+           i = indxi(ij)
+           j = indxj(ij)
+           coszen(i,j) = shr_orb_cosz(ydayp1,tlat(i,j),tlon(i,j),delta,dt)
+         enddo
+#else
          do ij = 1, icells
             i = indxi(ij)
             j = indxj(ij)
@@ -132,7 +145,8 @@
                  + cos(tlat(i,j))*cos(delta) &
                  * cos((sec/secday-p5)*c2*pi + tlon(i,j)) !cos(hour angle)
          enddo
- 
+#endif
+!-tht 
       endif
 
       end subroutine compute_coszen

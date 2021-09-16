@@ -3708,9 +3708,12 @@ contains
          zTsn ! snow layer temperature (C)
     
     real(kind=dbl_kind), parameter :: &
-         A = c1 / (rhos * cp_ice) , &
+!jd         A = c1 / (rhos * cp_ice) , &
          B = Lfresh / cp_ice
-    
+!jd
+    real(kind=dbl_kind) :: A
+    A = c1 / (rhos * cp_ice) 
+!jd    
     zTsn = A * zqsn + B
 
   end function temperature_snow

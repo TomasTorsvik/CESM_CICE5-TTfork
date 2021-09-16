@@ -92,11 +92,13 @@ module ice_prescribed_mod
     real (kind=dbl_kind), parameter :: &
        cp_sno = 0.0_dbl_kind & ! specific heat of snow                (J/kg/K)
     ,  rLfi = Lfresh*rhoi & ! latent heat of fusion ice               (J/m^3)
-    ,  rLfs = Lfresh*rhos & ! latent heat of fusion snow              (J/m^3)
+!jd These are not used in the code and gives compilation error when changing r
+!jd rhos to a namelist variable (not parameter)
+!jd    ,  rLfs = Lfresh*rhos & ! latent heat of fusion snow              (J/m^3)
     ,  rLvi = Lvap*rhoi   & ! latent heat of vapor*rhoice             (J/m^3)
-    ,  rLvs = Lvap*rhos   & ! latent heat of vapor*rhosno             (J/m^3)
+!jd    ,  rLvs = Lvap*rhos   & ! latent heat of vapor*rhosno             (J/m^3)
     ,  rcpi = cp_ice*rhoi & ! heat capacity of fresh ice              (J/m^3)
-    ,  rcps = cp_sno*rhos & ! heat capacity of snow                   (J/m^3)
+!jd    ,  rcps = cp_sno*rhos & ! heat capacity of snow                   (J/m^3)
     ,  rcpidepressT = rcpi*depressT & ! param for finding T(z) from q (J/m^3)
     ,  rLfidepressT = rLfi*depressT ! param for heat capacity   (J deg/m^3)
          ! heat capacity of sea ice, rhoi*C=rcpi+rLfidepressT*salinity/T^2

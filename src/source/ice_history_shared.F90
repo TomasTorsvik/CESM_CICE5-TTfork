@@ -215,6 +215,9 @@
            f_Tref      = 'm', f_Qref       = 'm', &
            f_congel    = 'm', f_frazil     = 'm', &
            f_snoice    = 'm', f_dsnow      = 'm', &
+!jd
+           f_sn2oc     = 'm', f_snfonice   = 'm', &
+!jd
            f_meltt     = 'm', f_melts      = 'm', &
            f_meltb     = 'm', f_meltl      = 'm', &
            f_fresh     = 'm', f_fresh_ai   = 'm', &
@@ -242,6 +245,13 @@
            f_sitempbot = 'x', f_sispeed    = 'x', &
            f_siu       = 'x', f_siv        = 'x', &
            f_sidmasstranx = 'x', f_sidmasstrany = 'x', &
+!jd noresm-start
+           f_simasstranx = 'x', f_simasstrany = 'x', &
+           f_sndmasstranx = 'x', f_sndmasstrany = 'x', &
+           f_aicetranx = 'x', f_aicetrany = 'x', &
+           f_simass = 'x', f_sisnmass = 'x', &
+           f_sisal = 'x', &
+!jd end
            f_sistrxdtop = 'x', f_sistrydtop = 'x', &
            f_sistrxubot = 'x', f_sistryubot = 'x', &
            f_sicompstren = 'x', &
@@ -258,6 +268,11 @@
            f_sidmassmeltbot = 'x', &
            f_sidmasslat = 'x', &
            f_sndmasssnf = 'x', &
+!jd noresm start
+           f_sndmasssi = 'x', &    
+           f_sndmasswindrif = 'x', &
+           f_sndmassdyn = 'x', &
+!jd end
            f_sndmassmelt = 'x', &
            f_siflswdtop = 'x', &
            f_siflswutop = 'x', &
@@ -355,6 +370,9 @@
            f_Tref,      f_Qref     , &
            f_congel,    f_frazil   , &
            f_snoice,    f_dsnow    , &
+!jd
+           f_sn2oc,     f_snfonice , &
+!jd
            f_meltt,     f_melts    , &
            f_meltb,     f_meltl    , &
            f_fresh,     f_fresh_ai , &
@@ -382,6 +400,13 @@
            f_sitempbot, f_sispeed,   &
            f_siu,       f_siv,       &
            f_sidmasstranx, f_sidmasstrany, &
+!jd noresm-start
+           f_simasstranx, f_simasstrany, &
+           f_sndmasstranx, f_sndmasstrany, &
+           f_aicetranx, f_aicetrany, &
+           f_simass ,   f_sisnmass , &
+           f_sisal , &
+!jd end
            f_sistrxdtop, f_sistrydtop, &
            f_sistrxubot, f_sistryubot, &
            f_sicompstren, &
@@ -398,6 +423,11 @@
            f_sidmassmeltbot, &
            f_sidmasslat, &
            f_sndmasssnf, &
+!jd noresm start
+           f_sndmasssi, & 
+           f_sndmasswindrif, &
+           f_sndmassdyn, & 
+!jd end
            f_sndmassmelt, &
            f_siflswdtop, &
            f_siflswutop, &
@@ -511,6 +541,9 @@
            n_Tref       , n_Qref       , &
            n_congel     , n_frazil     , &
            n_snoice     , n_dsnow      , &
+!jd
+           n_sn2oc      , n_snfonice , &
+!jd
            n_meltt      , n_melts      , &
            n_meltb      , n_meltl      , &
            n_fresh      , n_fresh_ai   , &
@@ -521,6 +554,13 @@
            n_sitempbot  , n_sispeed,     &
            n_siu,         n_siv,         &
            n_sidmasstranx, n_sidmasstrany, &
+!jd noresm-start
+           n_simasstranx, n_simasstrany, &
+           n_sndmasstranx,n_sndmasstrany, &
+           n_aicetranx,   n_aicetrany, &
+           n_simass ,     n_sisnmass , &
+           n_sisal, &
+!jd end
            n_sistrxdtop,  n_sistrydtop,  &
            n_sistrxubot,  n_sistryubot,  &
            n_sicompstren, &
@@ -537,6 +577,11 @@
            n_sidmassmeltbot,  &
            n_sidmasslat,  &
            n_sndmasssnf,  &
+!jd noresm start
+           n_sndmasssi, & 
+           n_sndmasswindrif, &
+           n_sndmassdyn, &
+!jd end
            n_sndmassmelt,  &
            n_siflswdtop,  &
            n_siflswutop,  &

@@ -210,6 +210,10 @@
       use ice_therm_shared, only: calc_Tsfc
       use ice_therm_vertical, only: frzmlt_bottom_lateral, thermo_vertical
       use ice_timers, only: ice_timer_start, ice_timer_stop, timer_ponds
+!jd - Blowing snow modification
+      use ice_snowphys, only: blowingsnow,snowphys_snowfonice, &
+           snowfonicen, snow2ocnn, snowfonice, snow2ocn
+!jd
 
       real (kind=dbl_kind), intent(in) :: &
          dt      ! time step
@@ -278,7 +282,7 @@
          istop, jstop    ! indices of grid cell where model aborts 
 
       real (kind=dbl_kind), dimension (nx_block,ny_block) :: &
-         worka, workb
+         worka, workb, fsnown
 
       l_stop = .false.
 
@@ -379,6 +383,7 @@
                         dfloe       (:,:,iblk), ncat)
          endif 
 
+
          do n = 1, ncat
 
             meltsn(:,:,n,iblk)  = c0
@@ -388,6 +393,15 @@
             snoicen(:,:,n,iblk) = c0
             dsnown(:,:,n,iblk) = c0 
 !            Tsf_icen(:,:,n,iblk) = c0
+!jd
+            if (trim(blowingsnow)=='lecomte2013') then
+               snowfonicen(:,:,n,iblk) = c0
+            else
+               snowfonicen(:,:,n,iblk) = c1
+            end if
+            fsnown(:,:) = fsnow(:,:,iblk)
+            snow2ocnn(:,:,n,iblk) = c0
+!jd
            
       !-----------------------------------------------------------------
       ! Identify cells with nonzero ice area
@@ -501,6 +515,23 @@
                                    trcrn(:,:,nt_FY,n,iblk))
             endif
 
+      !-----------------------------------------------------------------      
+      ! Calculate amount of snow blowing directly into the ocean from this
+      ! cathegory.  (jd) First part, split 
+      !-----------------------------------------------------------------
+            if (trim(blowingsnow)=='lecomte2013') then
+               call snowphys_snowfonice(icells,                  &
+                                        indxi, indxj,            &
+                                        snowfonicen(:,:,n,iblk), &
+                                        aice(:,:,iblk))
+               do ij = 1, icells
+                  i = indxi(ij)
+                  j = indxj(ij)
+                  fsnown(i,j)=fsnow(i,j,iblk)*snowfonicen(i,j,n,iblk)
+                  snow2ocnn(i,j,n,iblk)=fsnow(i,j,iblk) - fsnown(i,j)
+               end do
+
+            end if
       !-----------------------------------------------------------------
       ! Vertical thermodynamics: Heat conduction, growth and melting.
       !----------------------------------------------------------------- 
@@ -533,7 +564,8 @@
                                 vicen(:,:,n,iblk),   vsnon(:,:,n,iblk),   &
                                 flw    (:,:,iblk),   potT (:,:,iblk),     &
                                 Qa     (:,:,iblk),   rhoa (:,:,iblk),     &
-                                fsnow  (:,:,iblk),   fpond (:,:,iblk),    &
+!jd                                fsnow  (:,:,iblk),   fpond (:,:,iblk),    &
+                                fsnown  (:,:),   fpond (:,:,iblk),    &
                                 fbot,                Tbotn,                &
                                 Tsnicen, &
                                 sss  (:,:,iblk),                          &
@@ -590,6 +622,18 @@
          enddo
 
       !-----------------------------------------------------------------
+      ! Snowfall and energy to the ocean
+      !-----------------------------------------------------------------
+
+         do ij = 1,icells
+            i = indxi(ij)
+            j = indxj(ij)
+            fhocnn(i,j) = fhocnn(i,j) &
+                 - Lfresh*snow2ocnn(i,j,n,iblk)
+            freshn(i,j) = freshn(i,j) + snow2ocnn(i,j,n,iblk)
+         enddo
+
+      !-----------------------------------------------------------------
       ! Aerosol update
       !-----------------------------------------------------------------
          if (tr_aero .and. icells > 0) then
@@ -602,7 +646,8 @@
                                     meltbn(:,:,n,iblk),                  &
                                     congeln(:,:,n,iblk),                 &
                                     snoicen(:,:,n,iblk),                 &
-                                    fsnow(:,:,iblk),                     &
+!jd                                    fsnow(:,:,iblk),                     &
+                                    fsnown(:,:),                         &
                                     trcrn(:,:,:,n,iblk),                 &
                                     aicen_init(:,:,n,iblk),              &
                                     vicen_init(:,:,n,iblk),              &
@@ -628,7 +673,8 @@
                                     congeln(:,:,n,iblk), &
                                     snoicen(:,:,n,iblk), &
                                     evapn,                 &
-                                    fsnow(:,:,iblk), &
+!jd                                    fsnow(:,:,iblk), &
+                                    fsnown(:,:), &
                                     Qrefn_iso(:,:,:),                &
                                     trcrn(:,:,:,n,iblk), &
                                     aicen_init(:,:,n,iblk), &
@@ -768,6 +814,10 @@
                             meltt   (:,:,iblk),  melts   (:,:,iblk),  &
                             meltb   (:,:,iblk),                       &
                             congel  (:,:,iblk),  snoice  (:,:,iblk),  &
+!jd
+                            snow2ocnn(:,:,n,iblk), snow2ocn(:,:,iblk),  &
+                            snowfonicen(:,:,n,iblk), snowfonice(:,:,iblk),  &
+!jd
                             Uref=Uref(:,:,iblk), Urefn=Urefn,         &
                             Qref_iso=Qref_iso(:,:,:,iblk), &
                             Qrefn_iso=Qrefn_iso(:,:,:),&
@@ -1179,7 +1229,8 @@
       use ice_dyn_evp, only: evp
       use ice_dyn_eap, only: eap
       use ice_dyn_shared, only: kdyn
-      use ice_flux, only: daidtd, dvidtd, init_history_dyn, dagedtd
+!jd      use ice_flux, only: daidtd, dvidtd, init_history_dyn, dagedtd
+      use ice_flux, only: daidtd, dvidtd, dvsdtd, init_history_dyn, dagedtd
       use ice_grid, only: tmask
       use ice_itd, only: aggregate
       use ice_state, only: nt_qsno, trcrn, vsnon, aicen, vicen, ntrcr, &
@@ -1277,6 +1328,9 @@
          do j = jlo,jhi
          do i = ilo,ihi
             dvidtd(i,j,iblk) = (vice(i,j,iblk) - dvidtd(i,j,iblk)) /dt
+!jd
+            dvsdtd(i,j,iblk) = (vsno(i,j,iblk) - dvsdtd(i,j,iblk)) /dt
+!jd
             daidtd(i,j,iblk) = (aice(i,j,iblk) - daidtd(i,j,iblk)) /dt
             if (tr_iage) &
                dagedtd(i,j,iblk)= (trcr(i,j,nt_iage,iblk)-dagedtd(i,j,iblk))/dt
