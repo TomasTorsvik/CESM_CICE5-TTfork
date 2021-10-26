@@ -1268,6 +1268,9 @@
                               aicen,     trcrn,      &
                               vicen,                 &
                               aice0,     aice,       &
+!jd
+                              thice_obs,             &
+!jd
                               frzmlt,    frazil,     &
                               frazil_diag,           &
                               frz_onset, yday,       &
@@ -1297,6 +1300,9 @@
       use ice_therm_shared, only: ktherm, hfrazilmin
       use ice_zbgc, only: add_new_ice_bgc
       use ice_zbgc_shared, only: skl_bgc
+!jd pamip-short
+      use ice_da, only: da_method, da_ice
+!jd 
 
       integer (kind=int_kind), intent(in) :: &
          nx_block, ny_block, & ! block dimensions
@@ -1312,6 +1318,9 @@
 
       real (kind=dbl_kind), dimension (nx_block,ny_block), intent(in) :: &
          aice  , & ! total concentration of ice
+!jd pamip-short
+         thice_obs, & ! New ice thickness used in the pamip-short experiments
+!jd
          frzmlt, & ! freezing/melting potential (W/m^2)
          Tf    , & ! freezing temperature (C)
          sss       ! sea surface salinity (ppt)
@@ -1441,9 +1450,18 @@
 
       real (kind=dbl_kind) :: frazil_conc
 
+! jd pamip short
+      real (kind=dbl_kind) :: &
+         hfrazmin ! Local value of hfrazilmin, modified in pamip_short experiments
+      logical (kind=log_kind) :: local_hfrazmin
+!jd 
       !-----------------------------------------------------------------
       ! initialize
       !-----------------------------------------------------------------
+
+!jd pamip-short
+      local_hfrazmin = da_ice .and. (trim(da_method) == 'pamip_short')
+!jd
 
       l_stop = .false.
       istop = 0
@@ -1599,7 +1617,11 @@
             ! new ice area and thickness
             ! hin_max(0) < new ice thickness < hin_max(1)
             if (aice0(i,j) > puny) then
-               hi0new = max(vi0new(ij)/aice0(i,j), hfrazilmin)
+               hfrazmin = hfrazilmin
+               if (local_hfrazmin) &
+                    hfrazmin = max(thice_obs(i,j),hfrazilmin)
+!jd               hi0new = max(vi0new(ij)/aice0(i,j), hfrazilmin)
+               hi0new = max(vi0new(ij)/aice0(i,j), hfrazmin)
                if (hi0new > hi0max .and. aice0(i,j)+puny < c1) then
                   ! distribute excess volume over all categories (below)
                   hi0new = hi0max

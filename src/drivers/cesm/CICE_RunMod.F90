@@ -152,10 +152,13 @@
          if (restore_ice) call ice_HaloRestore
 
       !-----------------------------------------------------------------
-      ! assimilate observations prepare increment
+      ! assimilate observations 
       !-----------------------------------------------------------------
  
-         if (da_ice) call ice_da_prep(idate, sec)
+         if (da_ice) then
+            call ice_da_prep(idate, sec)
+            call ice_da_update
+         end if
 
       !-----------------------------------------------------------------
       ! initialize diagnostics
@@ -203,12 +206,6 @@
          call ice_timer_stop(timer_thermo) ! thermodynamics
          call ice_timer_stop(timer_column) ! column physics
 
-      !-----------------------------------------------------------------
-      ! assimilate observations update fields
-      !-----------------------------------------------------------------
- 
-         if (da_ice) call ice_da_update
-         
       !-----------------------------------------------------------------
       ! dynamics, transport, ridging
       !-----------------------------------------------------------------

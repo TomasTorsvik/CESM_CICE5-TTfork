@@ -16,7 +16,7 @@ module ice_da
 
 ! !USES:  
   use ice_kinds_mod
-  use ice_constants, only: c0, c1, p1, p01, c10, secday, puny, &
+  use ice_constants, only: c0, c1, p1, p2, p01, p05, p15, c10, secday, puny, &
        field_loc_center, field_type_scalar
   use ice_blocks, only: nx_block, ny_block
   use ice_domain_size, only: max_blocks, max_ntrcr
@@ -84,7 +84,6 @@ module ice_da
        thsnow_obs_err ,  & ! observed snow thickness std (m)
        thsnow_inc          ! Snow thickness increment
 
-!jd      real (kind=dbl_kind), dimension (:,:,:,:), allocatable :: &
 !jd         trcr_obs, trcr_err, trcr_inc     ! tracers
 
 
@@ -96,8 +95,17 @@ module ice_da
                      ! mass increase
 
 
-  real (kind=dbl_kind), parameter :: min_aice_obs = 0.05
-  real (kind=dbl_kind), parameter :: max_aice_obs = 1.00
+  logical (kind=log_kind), dimension (:,:,:), allocatable :: &
+       da_mask   ! Mask used to limit the assimilation region
+
+
+  real (kind=dbl_kind), parameter :: min_aice_obs = p1
+  real (kind=dbl_kind), parameter :: max_aice_obs = c1
+
+
+  real (kind=dbl_kind) :: &
+       da_lat_min = -90.0_dbl_kind,   & ! Southern limit of da-region
+       da_lat_max = 90.0_dbl_kind       ! Northern limit of da-region
 
   
       !jd For data stream
@@ -163,13 +171,18 @@ contains
             vice_inc(nx_block,ny_block,max_blocks),  & 
             vsno_inc(nx_block,ny_block,max_blocks) )
         
+
+       allocate(da_mask(nx_block,ny_block,max_blocks))
+       da_mask = ( tmask .and. (TLAT >= da_lat_min) .and. (TLAT <= da_lat_max ))
+
        aice_obs = c0
        aice_obs_err = p1
        aice_inc = c0
        vice_inc = c0
        vsno_inc = c0
-       where( tmask .and. (TLAT >= 80. .or. TLAT <= -70 ))
-          aice_obs = 0.99*c1
+       ! Syntetic initial conditions. Owerritten by data from input-file
+       where( tmask .and. (TLAT >= 80.0_dbl_kind .or. TLAT <= -70.0_dbl_kind ))
+          aice_obs = 0.99_dbl_kind
           aice_obs_err=p01*p01
        endwhere
        allocate(da_fresh(nx_block,ny_block,max_blocks), &
@@ -253,6 +266,8 @@ contains
         da_timescale, da_method, da_data_dir,&
         da_update_ocn_heat,    &
         da_update_ocn_mass,    &
+        da_lat_min,            & 
+        da_lat_max,            & 
         da_stream_year_first  ,&
         da_stream_year_last   ,&
         da_model_year_align   ,&
@@ -277,6 +292,8 @@ contains
    da_sit      = .false.
    da_sno      = .false.
    da_timescale=5.   ! Timescale in days
+   da_lat_min = -90
+   da_lat_max = 90
    da_method   = 'pamip_long'
    da_data_dir = '.'
 
@@ -321,7 +338,9 @@ contains
    call broadcast_scalar(da_timescale,       master_task)
    call broadcast_scalar(da_method,          master_task)
    call broadcast_scalar(da_data_dir,        master_task)
-   
+   call broadcast_scalar(da_lat_min,        master_task)
+   call broadcast_scalar(da_lat_max,        master_task)
+
    call broadcast_scalar(da_model_year_align,master_task)
    call broadcast_scalar(da_stream_year_first,master_task)
    call broadcast_scalar(da_stream_year_last,master_task)
@@ -349,9 +368,27 @@ contains
       fillalgo='none'
    endif
 
+   ! Set da_method spesific da_timescale when negative or zero values are read from namelist
+   ! Positive values are kept from namelist.
+   if (da_timescale < puny) then
+        if (trim(da_method)=='pamip_short') then
+           da_timescale = c1
+        else if (trim(da_method)=='pamip_long') then
+           da_timescale = 60.0_dbl_kind
+        else 
+           da_timescale = 5.0_dbl_kind
+        end if
+     end if
+
+
+
    if (my_task == master_task) then
       write(nu_diag,*) ' '
-      write(nu_diag,*) '  This is the ice_da ice coverage option.'
+      write(nu_diag,*) '  This is the ice_da optons.'
+      write(nu_diag,*) '  da_method             = ', trim(da_method)
+      write(nu_diag,*) '  da_timescale          = ', da_timescale
+      write(nu_diag,*) '  da_lat_min            = ', da_lat_min
+      write(nu_diag,*) '  da_lat_max            = ', da_lat_max
       write(nu_diag,*) '  da_stream_year_first  = ',da_stream_year_first
       write(nu_diag,*) '  da_stream_year_last   = ',da_stream_year_last
       write(nu_diag,*) '  da_model_year_align   = ',da_model_year_align
@@ -407,17 +444,14 @@ contains
    call ice_da_init
    
    if (trim(da_method)=='pamip_short') then
-      if (my_task == master_task) then
-         write(nu_diag,*) &
+      if (my_task == master_task) write(nu_diag,*) &
               subName, ':: DA PAMIP SHORT :: Ice thickness NH : 2.0 m , SH, 1.0 m '
-!jd         write(nu_diag,*) &
-!jd              'da_ice_init_streams :: DA PAMIP SHORT :: Sets aice = 0.99 north of 80N and South of 70 S'
-      end if
+
       where ((TLAT >= c0))
          thice_obs = c2
          thice_obs_err = p01
       elsewhere
-         thice_obs = c2
+         thice_obs = c1
          thice_obs_err = p01
       endwhere
 
@@ -548,11 +582,12 @@ contains
 
          call da_pamip_update (nx_block, ny_block, &
               ilo, ihi, jlo, jhi,                  &
-              tmask(:,:,  iblk),     &
+              da_mask(:,:,  iblk),     &
               sss(:,:,iblk),         &
               Tf(:,:,iblk),          &
               salinz(:,:,:,iblk),    &
               aice(:,:,  iblk),      &
+              vice(:,:,iblk),        &
               aice_inc(:,:,iblk),    &
               thice_inc(:,:,iblk),   &
               vice_inc(:,:,iblk),    &
@@ -624,7 +659,6 @@ contains
    use ice_state, only: aicen, vicen, vsnon, trcrn, ntrcr, bound_state, &
         aice_init, aice0, aice, vice, vsno, trcr, trcr_depend
    use ice_itd, only: aggregate
-   use ice_grid, only:  tmask
 
    implicit none
 
@@ -692,8 +726,9 @@ contains
 
       call da_pamip_prep (nx_block,            ny_block,      &
                           ilo, ihi,            jlo, jhi,      &
-                          tmask(:,:,    iblk),                &
+                          da_mask(:,:,    iblk),                &
                           aice(:,:,     iblk),                &
+                          vice(:,:,     iblk),                &
                           aice_obs(:,:, iblk),                &
                           thice_obs(:,:, iblk),               &
                           aice_inc(:,:, iblk),                &
@@ -713,7 +748,8 @@ contains
 
  subroutine da_pamip_prep (nx_block,            ny_block,      &
                           ilo, ihi,            jlo, jhi,      &
-                          tmask,               aice,          &
+                          damask,               aice,          &
+                          vice,                                &
                           o_aice,              o_thice,  &
                           inc_aice,            inc_thice )
 
@@ -726,11 +762,12 @@ contains
 
   logical (kind=log_kind), dimension (nx_block,ny_block), &
        intent(in) :: &
-       tmask                 ! true for ice/ocean cells
+       damask                 ! true for ice/ocean cells
 
   real (kind=dbl_kind), dimension (nx_block,ny_block), &
        intent(in) :: &
        aice,               & ! model aggregate sic
+       vice,               & ! model aggregated ice volume
        o_aice,             & ! observed aggregate sic
        o_thice               ! observed ice thickness
          
@@ -751,6 +788,8 @@ contains
 !del       indxi, indxj    ! compressed indices for cells with restoring
 
   real (kind=dbl_kind) :: &
+       thi,          & ! model ice thickness
+       othi,         & ! observed ice thickness
        obs_ai,       & ! local version of thickness used
        rda,          & ! dt/dT, where dT is observation time step
        radd            ! incremental ratio
@@ -759,18 +798,35 @@ contains
   ! Calculate increment in ice concentration and thickness
   !-----------------------------------------------------------------
 
-  rda = dt / (da_timescale*real(secday,kind=dbl_kind))
+  rda = max(c0,min( dt / (da_timescale*real(secday,kind=dbl_kind)),c1))
 
-  if (da_sic == .true.) then
-
+  if (da_sic) then
      do j = jlo,jhi
         do i = ilo,ihi
-           if (tmask(i,j) ) then
+           if (damask(i,j) ) then
               obs_ai = min(o_aice(i,j), max_aice_obs)
               if (obs_ai < min_aice_obs) obs_ai = c0
               inc_aice(i,j)=rda*(obs_ai - aice(i,j))
            else
               inc_aice(i,j)=c0
+              
+           endif
+           
+        enddo
+     enddo
+  endif
+
+  if (da_sit) then
+     do j = jlo,jhi
+        do i = ilo,ihi
+           if (damask(i,j) ) then
+              thi = vice(i,j)/max(aice(i,j),puny)
+              othi=o_thice(i,j)
+              if (o_aice(i,j) < min_aice_obs) &
+                   othi = c0
+              inc_thice(i,j)=rda*(othi - thi)
+           else
+              inc_thice(i,j)=c0
               
            endif
            
@@ -783,18 +839,23 @@ end subroutine da_pamip_prep
 
 subroutine da_pamip_update (nx_block,ny_block,   &
                           ilo, ihi,  jlo, jhi,   &
-                          tmask,     sss,        &
+                          damask,     sss,        &
                           Tf,        salinz,     &
                           aice,                  &
+                          vice,                  &
                           inc_aice,  inc_thice,  &
                           inc_vice,  inc_vsno,   &
                           da_fresh,  da_fsalt,  da_fheat, &
                           aicen,     vicen,     vsnon,    &
                           trcrn,     ntrcr)         
 
-  use ice_constants, only: rhoi, rhos, p001, ice_ref_salinity
-  use ice_state, only: nt_qice, nt_qsno
+  use ice_constants, only: rhoi, rhos, p001, ice_ref_salinity,&
+                           c2,c5
+  use ice_state, only: nt_qice, nt_qsno, nt_aero, tr_aero
   
+  use ice_domain_size, only: n_aero
+!  use ice_grid, only:  TLAT
+    
   integer (kind=int_kind), intent(in) :: &
        nx_block, ny_block, & ! block dimensions
        ilo, ihi          , & ! physical domain indices
@@ -803,15 +864,16 @@ subroutine da_pamip_update (nx_block,ny_block,   &
 
   logical (kind=log_kind), dimension (nx_block,ny_block), &
        intent(in) :: &
-       tmask                 ! true for ice/ocean cells
+       damask                ! true region with assimilation
 
   real (kind=dbl_kind), dimension (nx_block,ny_block), &
        intent(in) :: &
        Tf,           & ! freezing temperature (C)
        sss,          & ! sea surface salinity (ppt)
-       aice,               & ! model aggregate sic
-       inc_aice,             & ! increment in aggregated ice concentration
-       inc_thice               ! incrmement in mean sea ice thickness
+       aice,         & ! model aggregate ice area fraction
+       vice,         & ! model aggregate ice volume
+       inc_aice,     & ! increment in aggregated ice concentration
+       inc_thice       ! incrmement in mean sea ice thickness
 
   real (kind=dbl_kind),dimension(nx_block,ny_block,nilyr+1),&
        intent(in) :: &
@@ -857,44 +919,76 @@ subroutine da_pamip_update (nx_block,ny_block,   &
        dfheat,    &
        vice0,    &
        vsno0,    &
-       radd            ! incremental ratio
+       radd,     &       ! incremental ratio
+       radhi            ! Thickness increment ration
+
+real (kind=dbl_kind), dimension(ncat) :: &
+     radn_aero, &      ! Increment used for aerosols in each category
+     radn,      &      ! Area increment used in each category
+     radhin            ! Thickness increment used in each category
 
   
   !-----------------------------------------------------------------
   ! assimilate sic on grid
   !-----------------------------------------------------------------
-
-  if (da_sic == .true.) then
+  
+  if (da_sic) then
      do j = jlo,jhi
         do i = ilo,ihi
-           if (tmask(i,j)) then
+           if (damask(i,j)) then
               da_fresh(i,j) = c0
               da_fsalt(i,j) = c0
               da_fheat(i,j) = c0
               
               !jd              if (aice(i,j) > puny) then
-              if (aice(i,j) > c0) then              
-                 radd = min(max(c0,c1 + inc_aice(i,j)/max(aice(i,j),puny)),c10)
-                 do n=1, ncat
-                    aicen(i,j,n) = aicen(i,j,n) * radd
-                    vice0 = vicen(i,j,n)
-                    vicen(i,j,n) = vicen(i,j,n) * radd
-                    vsno0 = vsnon(i,j,n)
-                    vsnon(i,j,n) = vsnon(i,j,n) * radd
+              if (aice(i,j) > c0) then
 
+! Calculate increments for each category
+! Limit ice growth factor to maximum 2.  ( 0 <= radd <= 2 ).
+! Thus, maximum a doubling of ice area per time step
+                 radd = min(max(c0,c1 + inc_aice(i,j)/max(aice(i,j),puny)), c2)
+                 radn(:)=radd
+                 radn_aero(:)=c1
+                 radhin(:) = c1
+                 !remove ice in all categories
+                 !but only increase it in relatively
+                 !thin categories (below 10 m thickness)
+                 if (radd>c1) then
+                    do n=1, ncat
+                       if ((vicen(i,j,n)/aicen(i,j,n))>c10) radn(n)=c1
+                    enddo ! ncat
+!jd !Reduce aerosol consentration when only small amount of ice exists before artificially increasing the ice concentration. 
+                    if (aice(i,j) < p2) radn_aero(:)=c1/radn(:)
+                 endif
+
+                 if (da_sit) then
+                    radhi = min(max(c0,c1 + inc_thice(i,j)*aice(i,j)/max(vice(i,j),puny)), c2)
+                    radhin(1:ncat) = radhi
+                 end if
+
+! Update state
+                 do n=1, ncat
+                    vice0 = vicen(i,j,n)
+                    vsno0 = vsnon(i,j,n)
+                    aicen(i,j,n) = aicen(i,j,n) * radn(n)
+                    vicen(i,j,n) = vicen(i,j,n) * radn(n) * radhin(n)
+                    vsnon(i,j,n) = vsnon(i,j,n) * radn(n)
+                    if (tr_aero) then
+                          trcrn(i,j,nt_aero:nt_aero+4*n_aero-1,n)=&
+                          trcrn(i,j,nt_aero:nt_aero+4*n_aero-1,n)*radn_aero(n)
+                    end if
+                    !
                     dvice = vicen(i,j,n) - vice0
                     dvsno = vsnon(i,j,n) - vsno0
-
                     ! From ice
                     dfresh = -dvice*rhoi/dt
                     dfsalt = ice_ref_salinity*p001*dfresh
-
                     ! From snow, no salt
                     dfresh = dfresh - dvsno*rhos/dt
-
+                    !
                     da_fresh(i,j) = da_fresh(i,j) + dfresh
                     da_fsalt(i,j) = da_fsalt(i,j) + dfsalt
-                    
+                    !
                     do k = 1, nilyr
                        ! enthalpy tracers do not change (e/v constant)
                        ! heat flux loss from ice increase
@@ -924,7 +1018,7 @@ subroutine da_pamip_update (nx_block,ny_block,   &
                            da_fsalt  (i,j),          &
                            da_fheat  (i,j) )
               endif
-           endif  ! tmask
+           endif  ! damask
          enddo
       enddo
 

@@ -1720,6 +1720,42 @@
     </values>
   </entry>
 
+  <entry id="da_timescale">
+    <type>real</type>
+    <category>assimilation</category>
+    <group>da_nml</group>
+    <desc>
+      Nudgning time scale in days. Negative values enforce default behaviour according to the da_method settings. 
+    </desc>
+    <values>
+      <value>-1.0</value>
+    </values>
+  </entry>
+
+  <entry id="da_lat_min">
+    <type>real</type>
+    <category>assimilation</category>
+    <group>da_nml</group>
+    <desc>
+      Minimum latitude for assimilation
+    </desc>
+    <values>
+      <value>-90.0</value>
+    </values>
+  </entry>
+
+  <entry id="da_lat_max">
+    <type>real</type>
+    <category>assimilation</category>
+    <group>da_nml</group>
+    <desc>
+      Maximum latitude for assimilation
+    </desc>
+    <values>
+      <value>90.0</value>
+    </values>
+  </entry>
+
 
 <!--  
   <entry id="da_sic">
