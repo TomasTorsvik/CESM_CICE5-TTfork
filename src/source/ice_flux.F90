@@ -186,6 +186,8 @@
          flwout  , & ! outgoing longwave radiation (W/m^2)
          Tref    , & ! 2m atm reference temperature (K)
          Qref    , & ! 2m atm reference spec humidity (kg/kg)
+         uas     , & ! 10m atm reference zonal wind (m/s)
+         vas     , & ! 10m atm reference meridional wind (m/s)
          Uref    , & ! 10m atm reference wind speed (m/s)
          evap    , & ! evaporative water flux (kg/m^2/s)
          evapi   , & ! evaporative water flux over ice (kg/m^2/s)
@@ -511,6 +513,8 @@
       evaps   (:,:,:) = c0
       Tref    (:,:,:) = c0
       Qref    (:,:,:) = c0
+      uas     (:,:,:) = c0
+      vas     (:,:,:) = c0
       Uref    (:,:,:) = c0
       alvdr   (:,:,:) = c0
       alidr   (:,:,:) = c0
@@ -579,6 +583,8 @@
       evaps   (:,:,:) = c0
       Tref    (:,:,:) = c0
       Qref    (:,:,:) = c0
+      uas     (:,:,:) = c0
+      vas     (:,:,:) = c0
       Uref    (:,:,:) = c0
 
       end subroutine init_flux_atm
@@ -795,6 +801,8 @@
                                snow2ocnn, snow2ocn,  &
                                snowfonicen,snowfonice, &
 !jd
+                               uas ,     uasn ,      &
+                               vas ,     vasn ,      &
                                Uref,     Urefn,      &
                                Qref_iso, Qrefn_iso,  &
                                fiso_evap,fiso_evapn, &
@@ -846,6 +854,8 @@
           snoicen     ! snow-ice growth                 (m)
            
       real (kind=dbl_kind), dimension(nx_block,ny_block), optional, intent(in):: &
+          uasn , &    ! zonal wind reference level      (m/s)
+          vasn , &    ! meridional wind reference level (m/s)
           Urefn       ! air speed reference level       (m/s)
 
       real (kind=dbl_kind), dimension(nx_block,ny_block,max_iso), optional, intent(in):: &
@@ -889,6 +899,8 @@
 
       real (kind=dbl_kind), dimension(nx_block,ny_block), optional, &
           intent(inout):: &
+          uas, &      ! zonal wind reference level      (m/s)
+          vas, &      ! meridional wind reference level (m/s)
           Uref        ! air speed reference level       (m/s)
 
       real (kind=dbl_kind), dimension(nx_block,ny_block,max_iso), optional, &
@@ -937,6 +949,12 @@
          Qref     (i,j)  = Qref    (i,j) + Qrefn   (i,j)*aicen(i,j)
          if (present(Urefn) .and. present(Uref)) then
             Uref  (i,j)  = Uref    (i,j) + Urefn   (i,j)*aicen(i,j)
+         endif
+         if (present(uasn) .and. present(uas)) then
+            uas   (i,j)  = uas     (i,j) + uasn    (i,j)*aicen(i,j)
+         endif
+         if (present(vasn) .and. present(vas)) then
+            vas   (i,j)  = vas     (i,j) + vasn    (i,j)*aicen(i,j)
          endif
          if (present(Qrefn_iso) .and. present(Qref_iso)) then
             Qref_iso(i,j,:)  = Qref_iso(i,j,:) + Qrefn_iso(i,j,:)*aicen(i,j)
@@ -993,6 +1011,7 @@
                                alvdf,    alidf,    &
                                flux_bio,           &
                                fsurf,    fcondtop, &
+                               uas,      vas ,     &
                                Uref,     wind,     &
                                Qref_iso,           &
                                fiso_evap,          &
@@ -1041,6 +1060,8 @@
 
       real (kind=dbl_kind), dimension(nx_block,ny_block), optional, &
           intent(inout):: &
+          uas, &      ! air speed reference level       (m/s)
+          vas, &      ! air speed reference level       (m/s)
           Uref        ! air speed reference level       (m/s)
 
       real (kind=dbl_kind), dimension(nx_block,ny_block,max_iso), optional, &
@@ -1089,6 +1110,12 @@
             if (present(Uref)) then
                Uref    (i,j) = Uref    (i,j) * ar
             endif
+            if (present(uas)) then
+               uas    (i,j) = uas    (i,j) * ar
+            endif
+            if (present(vas)) then
+               vas    (i,j) = vas    (i,j) * ar
+            endif
             if (present(Qref_iso)) then
                Qref_iso(i,j,:) = Qref_iso(i,j,:) * ar
             endif
@@ -1121,6 +1148,12 @@
             Qref    (i,j) = c0
             if (present(Uref) .and. present(wind)) then
                Uref    (i,j) = wind(i,j)
+            endif
+            if (present(uas) ) then
+               uas     (i,j) = c0
+            endif
+            if (present(vas) ) then
+               vas     (i,j) = c0
             endif
             if (present(Qref_iso)) then
                Qref_iso(i,j,:) = c0

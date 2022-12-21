@@ -12,6 +12,7 @@ module ice_import_export
   use ice_blocks      , only: block, get_block, nx_block, ny_block
   use ice_flux        , only: strairxt, strairyt, strocnxt, strocnyt
   use ice_flux        , only: alvdr, alidr, alvdf, alidf, Tref, Qref, Uref
+  use ice_flux        , only: uas, vas
   use ice_flux        , only: flat, fsens, flwout, evap, fswabs, fhocn, fswthru
   use ice_flux        , only: fresh, fsalt, zlvl, uatm, vatm, potT, Tair, Qa
   use ice_flux        , only: rhoa, swvdr, swvdf, swidr, swidf, flw, frain
@@ -433,6 +434,14 @@ contains
              ! surface temperature
              Tsrf(i,j,iblk)  = Tffresh + trcr(i,j,1,iblk)     !Kelvin (original ???)
 
+             ! wind  (on POP T-grid:  convert to lat-lon)
+             workx = uas(i,j,iblk)                             ! N/m^2
+             worky = vas(i,j,iblk)                             ! N/m^2
+             uas(i,j,iblk) = workx*cos(ANGLET(i,j,iblk)) &
+                             - worky*sin(ANGLET(i,j,iblk))
+             vas(i,j,iblk) = worky*cos(ANGLET(i,j,iblk)) &
+                             + workx*sin(ANGLET(i,j,iblk))
+
              ! wind stress  (on POP T-grid:  convert to lat-lon)
              workx = strairxT(i,j,iblk)                             ! N/m^2
              worky = strairyT(i,j,iblk)                             ! N/m^2
@@ -519,6 +528,8 @@ contains
                 i2x(index_i2x_Si_anidr ,n)    = alidr(i,j,iblk)
                 i2x(index_i2x_Si_avsdf ,n)    = alvdf(i,j,iblk)
                 i2x(index_i2x_Si_anidf ,n)    = alidf(i,j,iblk)
+                i2x(index_i2x_Si_uas  ,n)     = uas(i,j,iblk)
+                i2x(index_i2x_Si_vas  ,n)     = vas(i,j,iblk)
                 i2x(index_i2x_Si_u10  ,n)     = Uref(i,j,iblk)
                 i2x(index_i2x_Si_tref  ,n)    = Tref(i,j,iblk)
                 i2x(index_i2x_Si_qref  ,n)    = Qref(i,j,iblk)

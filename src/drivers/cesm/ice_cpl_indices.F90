@@ -22,6 +22,8 @@ module ice_cpl_indices
   integer :: index_i2x_Si_avsdf        ! albedo: near ir, direct         
   integer :: index_i2x_Si_anidr        ! albedo: visible, diffuse        
   integer :: index_i2x_Si_anidf        ! albedo: near ir, diffuse        
+  integer :: index_i2x_Si_uas          ! 10m zonal wind
+  integer :: index_i2x_Si_vas          ! 10m meridional wind
   integer :: index_i2x_Si_u10          ! 10m wind
   integer :: index_i2x_Faii_lwup       ! upward longwave heat flux  
   integer :: index_i2x_Faii_lat        ! latent          heat flux  
@@ -133,6 +135,8 @@ contains
     index_i2x_Si_avsdf      = mct_avect_indexra(i2x,'Si_avsdf')
     index_i2x_Si_anidf      = mct_avect_indexra(i2x,'Si_anidf')
     index_i2x_Si_snowh      = mct_avect_indexra(i2x,'Si_snowh')
+    index_i2x_Si_uas        = mct_avect_indexra(i2x,'Si_uas')
+    index_i2x_Si_vas        = mct_avect_indexra(i2x,'Si_vas')
     index_i2x_Si_u10        = mct_avect_indexra(i2x,'Si_u10')
     index_i2x_Faii_taux     = mct_avect_indexra(i2x,'Faii_taux')
     index_i2x_Faii_tauy     = mct_avect_indexra(i2x,'Faii_tauy')

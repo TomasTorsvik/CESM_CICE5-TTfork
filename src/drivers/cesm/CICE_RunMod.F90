@@ -291,7 +291,7 @@
           swvdr, swidr, swvdf, swidf, Tf, Tair, Qa, strairxT, strairyt, &
           fsens, flat, fswabs, flwout, evap, Tref, Qref, Uref, faero_ocn, &
           fsurfn_f, flatn_f, scale_fluxes, frzmlt_init, frzmlt, wind, &
-          snowfrac
+          snowfrac, uas, vas
       use ice_grid, only: tmask
       use ice_ocean, only: oceanmixed_ice, ocean_mixed_layer
       use ice_shortwave, only: alvdfn, alidfn, alvdrn, alidrn, &
@@ -450,6 +450,7 @@
                             alvdr    (:,:,iblk), alidr   (:,:,iblk), &
                             alvdf    (:,:,iblk), alidf   (:,:,iblk), &
                             flux_bio(:,:,1:nbtrcr,iblk),             &
+                            uas=uas(:,:,iblk),   vas=vas(:,:,iblk),  &
                             Uref=Uref(:,:,iblk), wind=wind(:,:,iblk) )
  
 !echmod - comment this out for efficiency, if .not. calc_Tsfc

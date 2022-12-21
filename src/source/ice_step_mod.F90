@@ -179,7 +179,7 @@
           flw, fsnow, fpond, sss, mlt_onset, frz_onset, faero_atm, faero_ocn, &
           fiso_atm, fiso_ocn, Qa_iso, Qref_iso, fiso_evap, fiso_rain, &
           frain, Tair, coszen, strairxT, strairyT, fsurf, fcondtop, fsens, &
-          flat, fswabs, flwout, evap, evapi, evaps, Tref, Qref, Uref, fresh, fsalt, fhocn, &
+          flat, fswabs, flwout, evap, evapi, evaps, Tref, Qref, Uref, uas, vas, fresh, fsalt, fhocn, &
           fswthru, meltt, melts, meltb, meltl, congel, snoice, fcondbot, fcondbotn, &
           set_sfcflux, merge_fluxes, send_i2x_per_cat, fswthrun_ai, Tbot, Tsnice, &
           HDO_ocn, H2_16O_ocn, H2_18O_ocn
@@ -239,6 +239,8 @@
          strairyn    , & ! air/ice meridional stress,         (N/m^2)
          Cd_atm_n,& ! drag coefficient ratio
          Trefn       , & ! air tmp reference level                (K)
+         uasn        , & ! zonal wind reference level           (m/s)
+         vasn        , & ! meridional wind reference level      (m/s)
          Urefn       , & ! air speed reference level            (m/s)
          Qrefn           ! air sp hum reference level         (kg/kg)
 
@@ -455,7 +457,7 @@
                                    Qref_iso = Qrefn_iso,           &
                                    uice=uvel(:,:,iblk),            &
                                    vice=vvel(:,:,iblk),            &
-                                   Uref=Urefn                      )
+                                   Uref=Urefn, uas=uasn, vas=vasn  )
                endif ! atmbndy
 
             else
@@ -464,6 +466,8 @@
                Trefn (:,:)  = c0
                Qrefn (:,:)  = c0
                Qrefn_iso(:,:,:)  = c0
+               uasn  (:,:)  = c0
+               vasn  (:,:)  = c0
                Urefn (:,:)  = c0
                lhcoef(:,:)  = c0
                shcoef(:,:)  = c0
@@ -805,6 +809,8 @@
                             snow2ocnn(:,:,n,iblk), snow2ocn(:,:,iblk),  &
                             snowfonicen(:,:,n,iblk), snowfonice(:,:,iblk),  &
 !jd
+                            uas=uas(:,:,iblk), uasn=uasn,         &
+                            vas=vas(:,:,iblk), vasn=vasn,         &
                             Uref=Uref(:,:,iblk), Urefn=Urefn,         &
                             Qref_iso=Qref_iso(:,:,:,iblk), &
                             Qrefn_iso=Qrefn_iso(:,:,:),&

@@ -94,7 +94,7 @@
                                       Cd_atm_n,    &
                                       Qa_iso, Qref_iso,   &
                                       uice,     vice,     &
-                                      Uref                )
+                                      Uref, uas, vas      )
 
 
       use ice_fileunits, only: nu_diag
@@ -142,7 +142,9 @@
          lhcoef       ! transfer coefficient for latent heat
 
       real (kind=dbl_kind), dimension (nx_block,ny_block), optional, intent(out) :: &
-         Uref         ! reference height wind speed (m/s)
+         Uref, &      ! reference height wind speed (m/s)
+         uas, &       ! reference height zonal wind (m/s)
+         vas          ! reference height meridional wind (m/s)
 
       real (kind=dbl_kind), dimension (nx_block,ny_block), optional, intent(in) :: &
          uice     , & ! x-direction ice speed (m/s)
@@ -521,6 +523,8 @@
             else
                Uref(i,j) = vmag(ij) * rd(ij) / rdn(ij)
             endif
+            uas(i,j) = uatm(i,j) * rd(ij) / rdn(ij)
+            vas(i,j) = vatm(i,j) * rd(ij) / rdn(ij)
          endif ! (present(Uref))
 
          if (present(Qref_iso)) then
