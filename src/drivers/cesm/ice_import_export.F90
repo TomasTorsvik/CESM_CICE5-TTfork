@@ -34,6 +34,9 @@ module ice_import_export
   use ice_prescribed_mod
   use ice_cpl_indices
   use perf_mod        , only: t_startf, t_stopf, t_barrierf
+  ! total salt
+  use ice_state       , only: trcrn, nt_sice, vicen
+  use ice_domain_sice , only: nilyr
 
   implicit none
   public
@@ -381,7 +384,7 @@ contains
     real(r8), intent(inout) :: i2x(:,:)
     !
     ! Local Variables
-    integer :: i, j, iblk, n, ij
+    integer :: i, j, k, iblk, n, ij
     integer :: n2 ! thickness category index
     integer :: ilo, ihi, jlo, jhi !beginning and end of physical domain
     integer (kind=int_kind)                                :: icells ! number of ocean/ice cells
@@ -394,7 +397,8 @@ contains
          ,  tauya &
          ,  tauxo &      ! ice/ocean stress
          ,  tauyo &
-         ,  ailohi       ! fractional ice area
+         ,  ailohi &     ! fractional ice area
+         ,  sisal        ! sea ice bulk salinity
 
     real (kind=dbl_kind) :: &
          workx, worky           ! tmps for converting grid
@@ -415,6 +419,7 @@ contains
     tauya(:,:,:) = c0
     tauxo(:,:,:) = c0
     tauyo(:,:,:) = c0
+    sisal(:,:,:) = c0
 
     !$OMP PARALLEL DO PRIVATE(iblk,i,j,workx,worky, this_block, ilo, ihi, jlo, jhi)
     do iblk = 1, nblocks
@@ -448,6 +453,15 @@ contains
                              - worky*sin(ANGLET(i,j,iblk))
              tauyo(i,j,iblk) = worky*cos(ANGLET(i,j,iblk)) &
                              + workx*sin(ANGLET(i,j,iblk))
+
+             ! Total salinity  (equivalent to "total salt" subroutine in ice_diagnostics)
+             do n = 1, ncat
+                do k = 1, nilyr
+                   sisal(i,j,iblk) = sisal(i,j,iblk) &
+                                   + trcrn(i,j,nt_sice+k-1,n,iblk) &
+                                   * vicen(i,j,n,iblk) / real(nilyr,kind=dbl_kind)
+                enddo
+             enddo
 
           enddo
        enddo
@@ -524,6 +538,10 @@ contains
                 i2x(index_i2x_Si_qref  ,n)    = Qref(i,j,iblk)
                 i2x(index_i2x_Si_snowh ,n)    = vsno(i,j,iblk) &
                      / ailohi(i,j,iblk)
+
+                !--- export sea ice salinity
+                i2x(index_i2x_Si_sisal ,n)    = sisal(i,j,iblk)
+
 
                 if (index_i2x_Si_logz0 > 0) then
                 if (Cdn_atm(i,j,iblk) > c0) then
