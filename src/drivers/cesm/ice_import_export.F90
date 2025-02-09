@@ -36,7 +36,7 @@ module ice_import_export
   use perf_mod        , only: t_startf, t_stopf, t_barrierf
   ! total salt
   use ice_state       , only: trcrn, nt_sice, vicen
-  use ice_domain_sice , only: nilyr
+  use ice_domain_size , only: nilyr
 
   implicit none
   public
