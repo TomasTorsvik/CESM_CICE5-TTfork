@@ -9,7 +9,8 @@
 # Disable these because this is our standard setup
 # pylint: disable=wildcard-import,unused-wildcard-import,wrong-import-position
 
-import os, shutil, sys, glob, filecmp, imp
+import os, shutil, sys, glob, filecmp
+from importlib.machinery import SourceFileLoader
 
 CIMEROOT = os.environ.get("CIMEROOT")
 if CIMEROOT is None:
@@ -195,7 +196,7 @@ def buildnml(case, caseroot, compname):
         cmd = os.path.join(os.path.join(srcroot,"components","cice","cime_config","buildcpp"))
         logger.info("     ...calling cice buildcpp to set build time options")
         try:
-            mod = imp.load_source("buildcpp", cmd)
+            mod = SourceFileLoader("buildcpp", cmd).load_module()
             mod.buildcpp(case)
         except:
             raise

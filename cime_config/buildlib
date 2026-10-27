@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-import os, shutil, sys, glob, imp
+import os, shutil, sys, glob
+from importlib.machinery import SourceFileLoader
 
 CIMEROOT = os.environ.get("CIMEROOT")
 if CIMEROOT is None:
@@ -30,7 +31,7 @@ def _build_cice():
         cmd = os.path.join(os.path.join(srcroot,"components","cice","cime_config","buildcpp"))
         logger.info("     ...calling cice buildcpp to set build time options")
         try:
-            mod = imp.load_source("buildcpp", cmd)
+            mod = SourceFileLoader("buildcpp", cmd).load_module()
             cice_cppdefs = mod.buildcpp(case)
         except:
             raise
